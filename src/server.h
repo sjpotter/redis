@@ -1855,6 +1855,8 @@ struct redisServer {
     int notify_keyspace_events; /* Events to propagate via Pub/Sub. This is an
                                    xor of NOTIFY_... flags. */
     dict *pubsubshard_channels;  /* Map channels to list of subscribed clients */
+    /* slot tracking */
+    int slots_enabled;        /* track key to slot mapping */
     /* Cluster */
     int cluster_enabled;      /* Is cluster enabled? */
     int cluster_port;         /* Set the cluster port for a node. */

@@ -181,7 +181,7 @@ void dbAdd(redisDb *db, robj *key, robj *val) {
     serverAssertWithInfo(NULL, key, de != NULL);
     dictSetVal(db->dict, de, val);
     signalKeyAsReady(db, key, val->type);
-    if (server.cluster_enabled) slotToKeyAddEntry(de, db);
+    if (server.cluster_enabled || server.slots_enabled) slotToKeyAddEntry(de, db);
     notifyKeyspaceEvent(NOTIFY_NEW,"new",key,db->id);
 }
 
@@ -200,7 +200,7 @@ int dbAddRDBLoad(redisDb *db, sds key, robj *val) {
     dictEntry *de = dictAddRaw(db->dict, key, NULL);
     if (de == NULL) return 0;
     dictSetVal(db->dict, de, val);
-    if (server.cluster_enabled) slotToKeyAddEntry(de, db);
+    if (server.cluster_enabled || server.slots_enabled) slotToKeyAddEntry(de, db);
     return 1;
 }
 
@@ -322,7 +322,7 @@ static int dbGenericDelete(redisDb *db, robj *key, int async) {
             freeObjAsync(key, val, db->id);
             dictSetVal(db->dict, de, NULL);
         }
-        if (server.cluster_enabled) slotToKeyDelEntry(de, db);
+        if (server.cluster_enabled || server.slots_enabled) slotToKeyDelEntry(de, db);
         dictFreeUnlinkedEntry(db->dict,de);
         return 1;
     } else {
@@ -462,7 +462,7 @@ long long emptyData(int dbnum, int flags, void(callback)(dict*)) {
     /* Flush slots to keys map if enable cluster, we can flush entire
      * slots to keys map whatever dbnum because only support one DB
      * in cluster mode. */
-    if (server.cluster_enabled) slotToKeyFlush(server.db);
+    if (server.cluster_enabled || server.slots_enabled) slotToKeyFlush(server.db);
 
     if (dbnum == -1) flushSlaveKeysWithExpireList();
 
@@ -489,7 +489,7 @@ redisDb *initTempDb(void) {
         tempDb[i].slots_to_keys = NULL;
     }
 
-    if (server.cluster_enabled) {
+    if (server.cluster_enabled || server.slots_enabled) {
         /* Prepare temp slot to key map to be written during async diskless replication. */
         slotToKeyInit(tempDb);
     }
@@ -508,7 +508,7 @@ void discardTempDb(redisDb *tempDb, void(callback)(dict*)) {
         dictRelease(tempDb[i].expires);
     }
 
-    if (server.cluster_enabled) {
+    if (server.cluster_enabled || server.slots_enabled) {
         /* Release temp slot to key map. */
         slotToKeyDestroy(tempDb);
     }
@@ -1425,7 +1425,7 @@ int dbSwapDatabases(int id1, int id2) {
  * database (temp) as the main (active) database, the actual freeing of old database
  * (which will now be placed in the temp one) is done later. */
 void swapMainDbWithTempDb(redisDb *tempDb) {
-    if (server.cluster_enabled) {
+    if (server.cluster_enabled || server.slots_enabled) {
         /* Swap slots_to_keys from tempdb just loaded with main db slots_to_keys. */
         clusterSlotToKeyMapping *aux = server.db->slots_to_keys;
         server.db->slots_to_keys = tempDb->slots_to_keys;

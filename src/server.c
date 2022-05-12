@@ -2599,6 +2599,7 @@ void initServer(void) {
     }
 
     if (server.cluster_enabled) clusterInit();
+    if (server.cluster_enabled || server.slots_enabled) slotToKeyInit(server.db);
     scriptingInit(1);
     functionsInit();
     slowlogInit();

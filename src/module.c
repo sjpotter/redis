@@ -12064,6 +12064,31 @@ const char *RM_GetCurrentCommandName(RedisModuleCtx *ctx) {
     return (const char*)ctx->client->cmd->fullname;
 }
 
+/* GetKeysInSlot - Comparable to CLUSTER GETKEYSINSLOT */
+/* It's the responsibility of the user to ensure that array is initialized to be at least max_keys long
+ * The number of entries filled is returned in count
+ */
+int RM_GetKeysInSlot(RedisModuleCtx *ctx, unsigned int slot, unsigned int max_keys, RedisModuleString ** array, size_t *count) {
+    if (!server.slots_enabled) return REDISMODULE_ERR;
+    if (array == NULL) return REDISMODULE_ERR;
+    if (slot >= CLUSTER_SLOTS) return REDISMODULE_ERR;
+
+    unsigned int keys_in_slot = countKeysInSlot(slot);
+    *count = max_keys > keys_in_slot ? keys_in_slot : max_keys;
+
+    dictEntry *de = (*server.db->slots_to_keys).by_slot[slot].head;
+    for (unsigned int j = 0; j < *count; j++) {
+        serverAssert(de != NULL);
+        sds sdskey = dictGetKey(de);
+        RedisModuleString *str = createObject(OBJ_STRING, sdskey);
+        if (ctx) autoMemoryAdd(ctx, REDISMODULE_AM_STRING, str);
+        array[j] = str;
+        de = dictEntryNextInSlot(de);
+    }
+
+    return REDISMODULE_OK;
+}
+
 /* --------------------------------------------------------------------------
  * ## Defrag API
  * -------------------------------------------------------------------------- */

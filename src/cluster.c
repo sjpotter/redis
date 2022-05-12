@@ -84,13 +84,6 @@ unsigned int countKeysInSlot(unsigned int hashslot);
 unsigned int countChannelsInSlot(unsigned int hashslot);
 unsigned int delKeysInSlot(unsigned int hashslot);
 
-/* Links to the next and previous entries for keys in the same slot are stored
- * in the dict entry metadata. See Slot to Key API below. */
-#define dictEntryNextInSlot(de) \
-    (((clusterDictEntryMetadata *)dictMetadata(de))->next)
-#define dictEntryPrevInSlot(de) \
-    (((clusterDictEntryMetadata *)dictMetadata(de))->prev)
-
 #define RCVBUF_INIT_LEN 1024
 #define RCVBUF_MAX_PREALLOC (1<<20) /* 1MB */
 
@@ -680,9 +673,6 @@ void clusterInit(void) {
     if (createSocketAcceptHandler(&server.cfd, clusterAcceptHandler) != C_OK) {
         serverPanic("Unrecoverable error creating Redis Cluster socket accept handler.");
     }
-
-    /* Initialize data for the Slot to key API. */
-    slotToKeyInit(server.db);
 
     /* The slots -> channels map is a radix tree. Initialize it here. */
     server.cluster->slots_to_channels = raxNew();

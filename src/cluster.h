@@ -165,6 +165,12 @@ typedef struct clusterDictEntryMetadata {
     dictEntry *next;            /* Next entry with key in the same slot */
 } clusterDictEntryMetadata;
 
+/* Links to the next and previous entries for keys in the same slot are stored
+ * in the dict entry metadata. See Slot to Key API below. */
+#define dictEntryNextInSlot(de) \
+    (((clusterDictEntryMetadata *)dictMetadata(de))->next)
+#define dictEntryPrevInSlot(de) \
+    (((clusterDictEntryMetadata *)dictMetadata(de))->prev)
 
 typedef struct clusterState {
     clusterNode *myself;  /* This node */
@@ -397,5 +403,6 @@ void clusterUpdateMyselfIp(void);
 void slotToChannelAdd(sds channel);
 void slotToChannelDel(sds channel);
 void clusterUpdateMyselfHostname(void);
+unsigned int countKeysInSlot(unsigned int hashslot);
 
 #endif /* __CLUSTER_H */
