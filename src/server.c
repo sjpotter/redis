@@ -373,7 +373,7 @@ size_t dictEntryMetadataSize(dict *d) {
     UNUSED(d);
     /* NOTICE: this also affect overhead_ht_slot_to_keys in getMemoryOverheadData.
      * If we ever add non-cluster related data here, that code must be modified too. */
-    return server.cluster_enabled ? sizeof(clusterDictEntryMetadata) : 0;
+    return (server.cluster_enabled || server.slots_enabled) ? sizeof(clusterDictEntryMetadata) : 0;
 }
 
 /* Generic hash table type where keys are Redis Objects, Values
