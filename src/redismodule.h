@@ -874,6 +874,9 @@ typedef struct RedisModuleTypeMethods {
 #define REDISMODULE_ATTR REDISMODULE_ATTR_COMMON
 #endif
 
+/* object to correspond to NULL / Root User */
+extern RedisModuleUser NullUser;
+
 REDISMODULE_API void * (*RedisModule_Alloc)(size_t bytes) REDISMODULE_ATTR;
 REDISMODULE_API void * (*RedisModule_TryAlloc)(size_t bytes) REDISMODULE_ATTR;
 REDISMODULE_API void * (*RedisModule_Realloc)(void *ptr, size_t bytes) REDISMODULE_ATTR;
@@ -1176,7 +1179,10 @@ REDISMODULE_API size_t (*RedisModule_MallocSizeString)(RedisModuleString* str) R
 REDISMODULE_API size_t (*RedisModule_MallocSizeDict)(RedisModuleDict* dict) REDISMODULE_ATTR;
 REDISMODULE_API RedisModuleUser * (*RedisModule_CreateModuleUser)(const char *name) REDISMODULE_ATTR;
 REDISMODULE_API void (*RedisModule_FreeModuleUser)(RedisModuleUser *user) REDISMODULE_ATTR;
+REDISMODULE_API void (*RedisModule_SetContextModuleUser)(RedisModuleCtx *ctx, const RedisModuleUser *user) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_SetModuleUserACL)(RedisModuleUser *user, const char* acl) REDISMODULE_ATTR;
+REDISMODULE_API RedisModuleString * (*RedisModule_SetModuleUserACLString)(RedisModuleCtx * ctx, RedisModuleUser *user, const char* acl) REDISMODULE_ATTR;
+REDISMODULE_API RedisModuleString * (*RedisModule_GetModuleUserACLString)(RedisModuleUser *user) REDISMODULE_ATTR;
 REDISMODULE_API RedisModuleString * (*RedisModule_GetCurrentUserName)(RedisModuleCtx *ctx) REDISMODULE_ATTR;
 REDISMODULE_API RedisModuleUser * (*RedisModule_GetModuleUserFromUserName)(RedisModuleString *name) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_ACLCheckCommandPermissions)(RedisModuleUser *user, RedisModuleString **argv, int argc) REDISMODULE_ATTR;
@@ -1516,7 +1522,10 @@ static int RedisModule_Init(RedisModuleCtx *ctx, const char *name, int ver, int 
     REDISMODULE_GET_API(MallocSizeDict);
     REDISMODULE_GET_API(CreateModuleUser);
     REDISMODULE_GET_API(FreeModuleUser);
+    REDISMODULE_GET_API(SetContextModuleUser);
     REDISMODULE_GET_API(SetModuleUserACL);
+    REDISMODULE_GET_API(SetModuleUserACLString);
+    REDISMODULE_GET_API(GetModuleUserACLString);
     REDISMODULE_GET_API(GetCurrentUserName);
     REDISMODULE_GET_API(GetModuleUserFromUserName);
     REDISMODULE_GET_API(ACLCheckCommandPermissions);

@@ -137,11 +137,13 @@ typedef struct RedisModulePoolAllocBlock {
  * but only the fields needed in a given context. */
 
 struct RedisModuleBlockedClient;
+struct RedisModuleUser;
 
 struct RedisModuleCtx {
     void *getapifuncptr;            /* NOTE: Must be the first field. */
     struct RedisModule *module;     /* Module reference. */
     client *client;                 /* Client calling a command. */
+    const struct RedisModuleUser *user;   /* User to RM_Call as if set */
     struct RedisModuleBlockedClient *blocked_client; /* Blocked client for
                                                         thread safe context. */
     struct AutoMemEntry *amqueue;   /* Auto memory queue of objects to free. */
@@ -565,7 +567,7 @@ void *RM_PoolAlloc(RedisModuleCtx *ctx, size_t bytes) {
  * Helpers for modules API implementation
  * -------------------------------------------------------------------------- */
 
-client *moduleAllocTempClient() {
+client *moduleAllocTempClient(const RedisModuleUser *user) {
     client *c = NULL;
 
     if (moduleTempClientCount > 0) {
@@ -575,8 +577,8 @@ client *moduleAllocTempClient() {
     } else {
         c = createClient(NULL);
         c->flags |= CLIENT_MODULE;
-        c->user = NULL; /* Root user */
     }
+    c->user = user ? user->user : NULL;
     return c;
 }
 
@@ -759,7 +761,7 @@ void moduleCreateContext(RedisModuleCtx *out_ctx, RedisModule *module, int ctx_f
     out_ctx->module = module;
     out_ctx->flags = ctx_flags;
     if (ctx_flags & REDISMODULE_CTX_TEMP_CLIENT)
-        out_ctx->client = moduleAllocTempClient();
+        out_ctx->client = moduleAllocTempClient(NULL);
     else if (ctx_flags & REDISMODULE_CTX_NEW_CLIENT)
         out_ctx->client = createClient(NULL);
 
@@ -5611,6 +5613,13 @@ RedisModuleString *RM_CreateStringFromCallReply(RedisModuleCallReply *reply) {
     }
 }
 
+/* Object to correspond to NULL/Root User, to distinguish from NULL (unset/reset) value */
+const RedisModuleUser NullUser = {0};
+
+void RM_SetContextModuleUser(RedisModuleCtx *ctx, const RedisModuleUser *user) {
+    ctx->user = user;
+}
+
 /* Returns an array of robj pointers, by parsing the format specifier "fmt" as described for
  * the RM_Call(), RM_Replicate() and other module APIs. Populates *argcp with the number of
  * items and *argvlenp with the length of the allocated argv.
@@ -5765,7 +5774,7 @@ fmterr:
  * * ESPIPE: Command not allowed on script mode
  *
  * Example code fragment:
- * 
+ *
  *      reply = RedisModule_Call(ctx,"INCRBY","sc",argv[1],"10");
  *      if (RedisModule_CallReplyType(reply) == REDISMODULE_REPLY_INTEGER) {
  *        long long myval = RedisModule_CallReplyInteger(reply);
@@ -5791,7 +5800,7 @@ RedisModuleCallReply *RM_Call(RedisModuleCtx *ctx, const char *cmdname, const ch
     error_as_call_replies = flags & REDISMODULE_ARGV_CALL_REPLIES_AS_ERRORS;
     va_end(ap);
 
-    c = moduleAllocTempClient();
+    c = moduleAllocTempClient(ctx->user);
 
     /* We do not want to allow block, the module do not expect it */
     c->flags |= CLIENT_DENY_BLOCKING;
@@ -5942,7 +5951,7 @@ RedisModuleCallReply *RM_Call(RedisModuleCtx *ctx, const char *cmdname, const ch
         int acl_errpos;
         int acl_retval;
 
-        if (ctx->client->user == NULL) {
+        if (ctx->client->user == NULL && ctx->user == NULL) {
             errno = ENOTSUP;
             if (error_as_call_replies) {
                 sds msg = sdsnew("acl verification failed, context is not attached to a client.");
@@ -5950,7 +5959,10 @@ RedisModuleCallReply *RM_Call(RedisModuleCtx *ctx, const char *cmdname, const ch
             }
             goto cleanup;
         }
-        acl_retval = ACLCheckAllUserCommandPerm(ctx->client->user,c->cmd,c->argv,c->argc,&acl_errpos);
+
+        /* above we validate that either ctx->client->user is set or ctx->user is, we prefer ctx->user */
+        user *user = ctx->user ? ctx->user->user : ctx->client->user;
+        acl_retval = ACLCheckAllUserCommandPerm(user,c->cmd,c->argv,c->argc,&acl_errpos);
         if (acl_retval != ACL_OK) {
             sds object = (acl_retval == ACL_DENIED_CMD) ? sdsdup(c->cmd->fullname) : sdsdup(c->argv[acl_errpos]->ptr);
             addACLLogEntry(ctx->client, acl_retval, ACL_LOG_CTX_MODULE, -1, ctx->client->user->name, object);
@@ -7182,8 +7194,8 @@ RedisModuleBlockedClient *moduleBlockClient(RedisModuleCtx *ctx, RedisModuleCmdF
     bc->disconnect_callback = NULL; /* Set by RM_SetDisconnectCallback() */
     bc->free_privdata = free_privdata;
     bc->privdata = privdata;
-    bc->reply_client = moduleAllocTempClient();
-    bc->thread_safe_ctx_client = moduleAllocTempClient();
+    bc->reply_client = moduleAllocTempClient(NULL);
+    bc->thread_safe_ctx_client = moduleAllocTempClient(NULL);
     if (bc->client)
         bc->reply_client->resp = bc->client->resp;
     bc->dbid = c->db->id;
@@ -8670,6 +8682,38 @@ int RM_FreeModuleUser(RedisModuleUser *user) {
  * and will set an errno describing why the operation failed. */
 int RM_SetModuleUserACL(RedisModuleUser *user, const char* acl) {
     return ACLSetUser(user->user, acl, -1);
+}
+
+RedisModuleString * RM_SetModuleUserACLString(RedisModuleCtx * ctx, RedisModuleUser *user, const char* acl) {
+    serverAssert(user != NULL);
+
+    sds sacl = sdsnew(acl);
+    int argc;
+    sds *argv = sdssplitargs(sacl, &argc);
+
+    sds error = ACLStringSetUser(user->user, NULL, argv, argc);
+
+    sdsfreesplitres(argv, argc);
+    sdsfree(sacl);
+
+    if (error) {
+        RedisModuleString *s = createObject(OBJ_STRING, error);
+        if (ctx != NULL) autoMemoryAdd(ctx, REDISMODULE_AM_STRING, s);
+
+        return s;
+    }
+
+    return NULL;
+}
+
+/* Get the ACL string for a given user
+ * Returns a RedisModuleString
+ */
+
+RedisModuleString *RM_GetModuleUserACLString(RedisModuleUser *user) {
+    serverAssert(user != NULL);
+
+    return ACLDescribeUser(user->user);
 }
 
 /* Retrieve the user name of the client connection behind the current context.
@@ -12716,7 +12760,10 @@ void moduleRegisterCoreAPI(void) {
     REGISTER_API(Scan);
     REGISTER_API(ScanKey);
     REGISTER_API(CreateModuleUser);
+    REGISTER_API(SetContextModuleUser);
     REGISTER_API(SetModuleUserACL);
+    REGISTER_API(SetModuleUserACLString);
+    REGISTER_API(GetModuleUserACLString);
     REGISTER_API(GetCurrentUserName);
     REGISTER_API(GetModuleUserFromUserName);
     REGISTER_API(ACLCheckCommandPermissions);
