@@ -747,6 +747,14 @@ typedef enum {
     REDISMODULE_ACL_LOG_CHANNEL /* Channel authorization failure */
 } RedisModuleACLLogEntryReason;
 
+/* This is to prevent a coupling between redis internals and modules */
+#define RM_SCRIPT_FLAG_NO_WRITES        (1ULL<<0)
+#define RM_SCRIPT_FLAG_ALLOW_OOM        (1ULL<<1)
+#define RM_SCRIPT_FLAG_ALLOW_STALE      (1ULL<<2)
+#define RM_SCRIPT_FLAG_NO_CLUSTER       (1ULL<<3)
+#define RM_SCRIPT_FLAG_EVAL_COMPAT_MODE (1ULL<<4) /* EVAL Script backwards compatible behavior, no shebang provided */
+#define RM_SCRIPT_FLAG_ALLOW_CROSS_SLOT (1ULL<<5)
+
 /* ------------------------- End of common defines ------------------------ */
 
 #ifndef REDISMODULE_CORE
@@ -1206,6 +1214,8 @@ REDISMODULE_API int (*RedisModule_RegisterNumericConfig)(RedisModuleCtx *ctx, co
 REDISMODULE_API int (*RedisModule_RegisterStringConfig)(RedisModuleCtx *ctx, const char *name, const char *default_val, unsigned int flags, RedisModuleConfigGetStringFunc getfn, RedisModuleConfigSetStringFunc setfn, RedisModuleConfigApplyFunc applyfn, void *privdata) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_RegisterEnumConfig)(RedisModuleCtx *ctx, const char *name, int default_val, unsigned int flags, const char **enum_values, const int *int_values, int num_enum_vals, RedisModuleConfigGetEnumFunc getfn, RedisModuleConfigSetEnumFunc setfn, RedisModuleConfigApplyFunc applyfn, void *privdata) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_LoadConfigs)(RedisModuleCtx *ctx) REDISMODULE_ATTR;
+REDISMODULE_API RedisModuleString * (*RedisModule_GetScriptBodyFlags)(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags) REDISMODULE_ATTR;
+REDISMODULE_API RedisModuleString * (*RedisModule_GetScriptSHAFlags)(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags) REDISMODULE_ATTR;
 
 #define RedisModule_IsAOFClient(id) ((id) == UINT64_MAX)
 
@@ -1522,6 +1532,8 @@ static int RedisModule_Init(RedisModuleCtx *ctx, const char *name, int ver, int 
     REDISMODULE_GET_API(ACLCheckKeyPermissions);
     REDISMODULE_GET_API(ACLCheckChannelPermissions);
     REDISMODULE_GET_API(ACLAddLogEntry);
+    REDISMODULE_GET_API(GetScriptBodyFlags);
+    REDISMODULE_GET_API(GetScriptSHAFlags);
     REDISMODULE_GET_API(DeauthenticateAndCloseClient);
     REDISMODULE_GET_API(AuthenticateClientWithACLUser);
     REDISMODULE_GET_API(AuthenticateClientWithUser);
@@ -1546,6 +1558,8 @@ static int RedisModule_Init(RedisModuleCtx *ctx, const char *name, int ver, int 
     REDISMODULE_GET_API(RegisterStringConfig);
     REDISMODULE_GET_API(RegisterEnumConfig);
     REDISMODULE_GET_API(LoadConfigs);
+    REDISMODULE_GET_API(GetScriptBodyFlags);
+    REDISMODULE_GET_API(GetScriptSHAFlags);
 
     if (RedisModule_IsModuleNameBusy && RedisModule_IsModuleNameBusy(name)) return REDISMODULE_ERR;
     RedisModule_SetModuleAttribs(ctx,name,ver,apiver);

@@ -58,7 +58,8 @@ TEST_MODULES = \
     eventloop.so \
     moduleconfigs.so \
     moduleconfigstwo.so \
-    publish.so
+    publish.so \
+    script_flags.so
 
 .PHONY: all
 

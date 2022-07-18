@@ -8820,6 +8820,71 @@ int RM_ACLAddLogEntry(RedisModuleCtx *ctx, RedisModuleUser *user, RedisModuleStr
     return REDISMODULE_OK;
 }
 
+/* This is to prevent a coupling between redis internals and modules */
+uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
+    uint64_t flags_out = 0;
+
+    if (flags & SCRIPT_FLAG_NO_WRITES) {
+        flags_out |= RM_SCRIPT_FLAG_NO_WRITES;
+    }
+
+    if (flags & SCRIPT_FLAG_ALLOW_OOM) {
+        flags_out |= RM_SCRIPT_FLAG_ALLOW_OOM;
+    }
+
+    if (flags & SCRIPT_FLAG_ALLOW_STALE) {
+        flags_out |= RM_SCRIPT_FLAG_ALLOW_STALE;
+    }
+
+    if (flags & SCRIPT_FLAG_NO_CLUSTER) {
+        flags_out |= RM_SCRIPT_FLAG_NO_CLUSTER;
+    }
+
+    if (flags & SCRIPT_FLAG_EVAL_COMPAT_MODE) {
+        flags_out |= RM_SCRIPT_FLAG_EVAL_COMPAT_MODE;
+    }
+
+    if (flags & SCRIPT_FLAG_ALLOW_CROSS_SLOT) {
+        flags_out |= RM_SCRIPT_FLAG_ALLOW_CROSS_SLOT;
+    }
+
+    return flags_out;
+}
+
+RedisModuleString * RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
+    sds err = NULL;
+    uint64_t flags;
+
+    if (getScriptFlags(NULL, body->ptr, &flags, &err) == C_ERR) {
+        RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
+        sdsfree(err);
+        return ret;
+    }
+
+    if (flags_out != NULL) {
+        *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
+    }
+
+    return NULL;
+}
+
+RedisModuleString * RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
+    sds err = NULL;
+    uint64_t flags;
+
+    if (getScriptFlags(sha->ptr, NULL, &flags, &err) == C_ERR) {
+        RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
+        sdsfree(err);
+        return ret;
+    }
+
+    if (flags_out != NULL) {
+        *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
+    }
+
+    return NULL;
+}
+
 /* Authenticate the client associated with the context with
  * the provided user. Returns REDISMODULE_OK on success and
  * REDISMODULE_ERR on error.
@@ -12707,6 +12772,8 @@ void moduleRegisterCoreAPI(void) {
     REGISTER_API(ACLCheckKeyPermissions);
     REGISTER_API(ACLCheckChannelPermissions);
     REGISTER_API(ACLAddLogEntry);
+    REGISTER_API(GetScriptBodyFlags);
+    REGISTER_API(GetScriptSHAFlags);
     REGISTER_API(FreeModuleUser);
     REGISTER_API(DeauthenticateAndCloseClient);
     REGISTER_API(AuthenticateClientWithACLUser);

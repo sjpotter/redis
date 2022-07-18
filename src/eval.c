@@ -403,6 +403,38 @@ uint64_t evalGetCommandFlags(client *c, uint64_t cmd_flags) {
     return scriptFlagsToCmdFlags(cmd_flags, script_flags);
 }
 
+/* Extracs the shebang flags for both a sha referenced script and a script with
+ * it's full body
+ *
+ * Adding to enable modules to make script flag determinations before they
+ * RM_Call() an eval
+ */
+int getScriptFlags(sds sha, sds body, uint64_t *flags, sds *err) {
+    if (sha != NULL) {
+        if (body != NULL) {
+            *err = sdsnew("Can only include only one of a sha or a script body");
+            return C_ERR;
+        }
+
+        dictEntry *de = dictFind(lctx.lua_scripts, sha);
+        if (!de) {
+            *err = sdsnew("Could not find a script loaded with the requested sha");
+            return C_ERR;
+        }
+        luaScript *l = dictGetVal(de);
+        *flags = l->flags;
+
+        return C_OK;
+    } else if (body != NULL) {
+        if (evalExtractShebangFlags(body, flags, NULL, err) == C_ERR) {
+            return C_ERR;
+        }
+        return C_OK;
+    }
+
+    return C_ERR;
+}
+
 /* Define a Lua function with the specified body.
  * The function name will be generated in the following form:
  *
