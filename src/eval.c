@@ -403,8 +403,8 @@ uint64_t evalGetCommandFlags(client *c, uint64_t cmd_flags) {
     return scriptFlagsToCmdFlags(cmd_flags, script_flags);
 }
 
-/* Extracs the shebang flags for both a sha referenced script and a script with
- * it's full body
+/* Extracts the shebang flags for both a sha referenced script and a script with
+ * its full body
  *
  * Adding to enable modules to make script flag determinations before they
  * RM_Call() an eval

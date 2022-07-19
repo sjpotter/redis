@@ -8851,7 +8851,7 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
     return flags_out;
 }
 
-RedisModuleString * RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
+RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
     sds err = NULL;
     uint64_t flags;
 
@@ -8868,7 +8868,7 @@ RedisModuleString * RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString
     return NULL;
 }
 
-RedisModuleString * RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
+RedisModuleString *RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
     sds err = NULL;
     uint64_t flags;
 
