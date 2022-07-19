@@ -8839,7 +8839,7 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
     return flags_out;
 }
 
-/* parses a script to extract the shbang flags that might be part of it
+/* parses a script to extract the shebang flags that might be part of it
  *
  * Ex: Enables a module to decide if it should RM_Call an eval in a noom situation
  *
