@@ -748,12 +748,12 @@ typedef enum {
 } RedisModuleACLLogEntryReason;
 
 /* This is to prevent a coupling between redis internals and modules */
-#define RM_SCRIPT_FLAG_NO_WRITES        (1ULL<<0)
-#define RM_SCRIPT_FLAG_ALLOW_OOM        (1ULL<<1)
-#define RM_SCRIPT_FLAG_ALLOW_STALE      (1ULL<<2)
-#define RM_SCRIPT_FLAG_NO_CLUSTER       (1ULL<<3)
-#define RM_SCRIPT_FLAG_EVAL_COMPAT_MODE (1ULL<<4) /* EVAL Script backwards compatible behavior, no shebang provided */
-#define RM_SCRIPT_FLAG_ALLOW_CROSS_SLOT (1ULL<<5)
+#define REDISMODULE_SCRIPT_FLAG_NO_WRITES        (1ULL<<0)
+#define REDISMODULE_SCRIPT_FLAG_ALLOW_OOM        (1ULL<<1)
+#define REDISMODULE_SCRIPT_FLAG_ALLOW_STALE      (1ULL<<2)
+#define REDISMODULE_SCRIPT_FLAG_NO_CLUSTER       (1ULL<<3)
+#define REDISMODULE_SCRIPT_FLAG_EVAL_COMPAT_MODE (1ULL<<4) /* EVAL Script backwards compatible behavior, no shebang provided */
+#define REDISMODULE_SCRIPT_FLAG_ALLOW_CROSS_SLOT (1ULL<<5)
 
 /* ------------------------- End of common defines ------------------------ */
 

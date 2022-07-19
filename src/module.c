@@ -8824,36 +8824,35 @@ int RM_ACLAddLogEntry(RedisModuleCtx *ctx, RedisModuleUser *user, RedisModuleStr
 uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
     uint64_t flags_out = 0;
 
-    if (flags & SCRIPT_FLAG_NO_WRITES) {
-        flags_out |= RM_SCRIPT_FLAG_NO_WRITES;
-    }
+    if (flags & SCRIPT_FLAG_NO_WRITES) flags_out |= REDISMODULE_SCRIPT_FLAG_NO_WRITES;
 
-    if (flags & SCRIPT_FLAG_ALLOW_OOM) {
-        flags_out |= RM_SCRIPT_FLAG_ALLOW_OOM;
-    }
+    if (flags & SCRIPT_FLAG_ALLOW_OOM) flags_out |= REDISMODULE_SCRIPT_FLAG_ALLOW_OOM;
 
-    if (flags & SCRIPT_FLAG_ALLOW_STALE) {
-        flags_out |= RM_SCRIPT_FLAG_ALLOW_STALE;
-    }
+    if (flags & SCRIPT_FLAG_ALLOW_STALE) flags_out |= REDISMODULE_SCRIPT_FLAG_ALLOW_STALE;
 
-    if (flags & SCRIPT_FLAG_NO_CLUSTER) {
-        flags_out |= RM_SCRIPT_FLAG_NO_CLUSTER;
-    }
+    if (flags & SCRIPT_FLAG_NO_CLUSTER) flags_out |= REDISMODULE_SCRIPT_FLAG_NO_CLUSTER;
 
-    if (flags & SCRIPT_FLAG_EVAL_COMPAT_MODE) {
-        flags_out |= RM_SCRIPT_FLAG_EVAL_COMPAT_MODE;
-    }
+    if (flags & SCRIPT_FLAG_EVAL_COMPAT_MODE) flags_out |= REDISMODULE_SCRIPT_FLAG_EVAL_COMPAT_MODE;
 
-    if (flags & SCRIPT_FLAG_ALLOW_CROSS_SLOT) {
-        flags_out |= RM_SCRIPT_FLAG_ALLOW_CROSS_SLOT;
-    }
+    if (flags & SCRIPT_FLAG_ALLOW_CROSS_SLOT) flags_out |= REDISMODULE_SCRIPT_FLAG_ALLOW_CROSS_SLOT;
 
     return flags_out;
 }
 
+/* parses a script to extract the shbang flags that might be part of it
+ *
+ * Ex: Enables a module to decide if it should RM_Call an eval in a noom situation
+ *
+ * Returns the error string that Redis would return if the script fails to
+ * parse so the module can reply the same error to the calling client.
+ *
+ * Responsibility of client to free the error string if it exists
+ */
 RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
     sds err = NULL;
     uint64_t flags;
+
+    serverAssert(flags_out != NULL);
 
     if (getScriptFlags(NULL, body->ptr, &flags, &err) == C_ERR) {
         RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
@@ -8861,9 +8860,7 @@ RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString 
         return ret;
     }
 
-    if (flags_out != NULL) {
-        *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
-    }
+    *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
 
     return NULL;
 }
