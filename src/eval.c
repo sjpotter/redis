@@ -418,7 +418,7 @@ int getScriptFlags(sds sha, sds body, uint64_t *flags, sds *err) {
 
         dictEntry *de = dictFind(lctx.lua_scripts, sha);
         if (!de) {
-            *err = sdsnew("Could not find a script loaded with the requested sha");
+            *err = sdsdup(shared.noscripterr->ptr);
             return C_ERR;
         }
         luaScript *l = dictGetVal(de);

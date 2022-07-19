@@ -8841,7 +8841,7 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
 
 /* parses a script to extract the shebang flags that might be part of it
  *
- * Ex: Enables a module to decide if it should RM_Call an eval in a noom situation
+ * Ex: Enables a module to decide if it should RM_Call an eval in an oom situation
  *
  * Returns the error string that Redis would return if the script fails to
  * parse so the module can reply the same error to the calling client.
@@ -8865,9 +8865,19 @@ RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString 
     return NULL;
 }
 
-RedisModuleString *RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
+/* Returns script flags from an already load script
+ *
+ * As script has already been loaded, can only fail if sha value doesn't exit
+ *
+ * Ex: Enables a module to decide if it should RM_Call an evalsha in an oom situation
+ *
+ * Responsibility of client to free the error string if it exists
+ */
+RedisModule *RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
     sds err = NULL;
     uint64_t flags;
+
+    serverAssert(flags_out != NULL);
 
     if (getScriptFlags(sha->ptr, NULL, &flags, &err) == C_ERR) {
         RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
@@ -8875,9 +8885,7 @@ RedisModuleString *RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *
         return ret;
     }
 
-    if (flags_out != NULL) {
-        *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
-    }
+    *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
 
     return NULL;
 }
