@@ -8842,27 +8842,20 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
 /* parses a script to extract the shebang flags that might be part of it
  *
  * Ex: Enables a module to decide if it should RM_Call an eval in an oom situation
- *
- * Returns the error string that Redis would return if the script fails to
- * parse so the module can reply the same error to the calling client.
- *
- * Responsibility of client to free the error string if it exists
  */
-RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
-    sds err = NULL;
+int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
+    UNUSED(ctx);
     uint64_t flags;
 
     serverAssert(flags_out != NULL);
 
-    if (getScriptFlags(NULL, body->ptr, &flags, &err) == C_ERR) {
-        RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
-        sdsfree(err);
-        return ret;
+    if (getScriptFlagsBody(body->ptr, &flags) == C_ERR) {
+        return REDISMODULE_ERR;
     }
 
     *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
 
-    return NULL;
+    return REDISMODULE_OK;
 }
 
 /* Returns script flags from an already load script
@@ -8870,24 +8863,20 @@ RedisModuleString *RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString 
  * As script has already been loaded, can only fail if sha value doesn't exit
  *
  * Ex: Enables a module to decide if it should RM_Call an evalsha in an oom situation
- *
- * Responsibility of client to free the error string if it exists
  */
-RedisModule *RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
-    sds err = NULL;
+int RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
+    UNUSED(ctx);
     uint64_t flags;
 
     serverAssert(flags_out != NULL);
 
-    if (getScriptFlags(sha->ptr, NULL, &flags, &err) == C_ERR) {
-        RedisModuleString *ret = RM_CreateString(ctx, err, sdslen(err));
-        sdsfree(err);
-        return ret;
+    if (getScriptFlagsSHA(sha->ptr, &flags) == C_ERR) {
+        return REDISMODULE_ERR;
     }
 
     *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
 
-    return NULL;
+    return REDISMODULE_OK;
 }
 
 /* Authenticate the client associated with the context with

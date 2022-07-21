@@ -409,30 +409,18 @@ uint64_t evalGetCommandFlags(client *c, uint64_t cmd_flags) {
  * Adding to enable modules to make script flag determinations before they
  * RM_Call() an eval
  */
-int getScriptFlags(sds sha, sds body, uint64_t *flags, sds *err) {
-    if (sha != NULL) {
-        if (body != NULL) {
-            *err = sdsnew("Can only include only one of a sha or a script body");
-            return C_ERR;
-        }
-
-        dictEntry *de = dictFind(lctx.lua_scripts, sha);
-        if (!de) {
-            *err = sdsdup(shared.noscripterr->ptr);
-            return C_ERR;
-        }
-        luaScript *l = dictGetVal(de);
-        *flags = l->flags;
-
-        return C_OK;
-    } else if (body != NULL) {
-        if (evalExtractShebangFlags(body, flags, NULL, err) == C_ERR) {
-            return C_ERR;
-        }
-        return C_OK;
+int getScriptFlagsSHA(sds sha, uint64_t *flags) {
+    dictEntry *de = dictFind(lctx.lua_scripts, sha);
+    if (!de) {
+        return C_ERR;
     }
+    luaScript *l = dictGetVal(de);
+    *flags = l->flags;
 
-    return C_ERR;
+    return C_OK;
+}
+int getScriptFlagsBody(sds body, uint64_t *flags) {
+    return evalExtractShebangFlags(body, flags, NULL, NULL);
 }
 
 /* Define a Lua function with the specified body.

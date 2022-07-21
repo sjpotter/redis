@@ -200,7 +200,6 @@ int scriptPrepareForRun(scriptRunCtx *run_ctx, client *engine_client, client *ca
                                   "can not run it when used memory > 'maxmemory'");
             return C_ERR;
         }
-
     } else {
         /* Special handling for backwards compatibility (no shebang eval[sha]) mode */
         if (running_stale) {
