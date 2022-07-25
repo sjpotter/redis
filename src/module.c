@@ -8860,7 +8860,7 @@ int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t
 
 /* Returns script flags from an already load script
  *
- * As script has already been loaded, can only fail if sha value doesn't exit
+ * As script has already been loaded, can only fail if sha value doesn't exist
  *
  * Ex: Enables a module to decide if it should RM_Call an evalsha in an oom situation
  */
