@@ -8842,6 +8842,15 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
 /* parses a script to extract the shebang flags that might be part of it
  *
  * Ex: Enables a module to decide if it should RM_Call an eval in an oom situation
+ *
+ * The Flags that can be returned are
+ *
+ * * REDISMODULE_SCRIPT_FLAG_NO_WRITES
+ * * REDISMODULE_SCRIPT_FLAG_ALLOW_OOM
+ * * REDISMODULE_SCRIPT_FLAG_ALLOW_STALE
+ * * REDISMODULE_SCRIPT_FLAG_NO_CLUSTER
+ * * REDISMODULE_SCRIPT_FLAG_EVAL_COMPAT_MODE
+ * * REDISMODULE_SCRIPT_FLAG_ALLOW_CROSS_SLOT
  */
 int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
     UNUSED(ctx);
@@ -8858,7 +8867,7 @@ int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t
     return REDISMODULE_OK;
 }
 
-/* Returns script flags from an already load script
+/* Returns script flags from an already loaded script
  *
  * As script has already been loaded, can only fail if sha value doesn't exist
  *
