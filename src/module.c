@@ -8852,8 +8852,7 @@ uint64_t mapInternalScriptFlagsToModuleFlags(uint64_t flags) {
  * * REDISMODULE_SCRIPT_FLAG_EVAL_COMPAT_MODE
  * * REDISMODULE_SCRIPT_FLAG_ALLOW_CROSS_SLOT
  */
-int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t *flags_out) {
-    UNUSED(ctx);
+int RM_GetScriptBodyFlags(RedisModuleString *body, uint64_t *flags_out) {
     uint64_t flags;
 
     serverAssert(flags_out != NULL);
@@ -8873,8 +8872,7 @@ int RM_GetScriptBodyFlags(RedisModuleCtx *ctx, RedisModuleString *body, uint64_t
  *
  * Ex: Enables a module to decide if it should RM_Call an evalsha in an oom situation
  */
-int RM_GetScriptSHAFlags(RedisModuleCtx *ctx, RedisModuleString *sha, uint64_t *flags_out) {
-    UNUSED(ctx);
+int RM_GetScriptSHAFlags(RedisModuleString *sha, uint64_t *flags_out) {
     uint64_t flags;
 
     serverAssert(flags_out != NULL);
