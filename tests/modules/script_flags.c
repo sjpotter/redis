@@ -7,7 +7,7 @@ int get_flags_body(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
     }
 
     uint64_t flags;
-    if (RedisModule_GetScriptBodyFlags(ctx, argv[1], &flags) == REDISMODULE_ERR) {
+    if (RedisModule_GetScriptBodyFlags(argv[1], &flags) == REDISMODULE_ERR) {
         RedisModule_ReplyWithError(ctx, "Script failed to parse");
         return REDISMODULE_OK;
     }
@@ -22,7 +22,7 @@ int get_flags_sha(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
     }
 
     uint64_t flags;
-    if (RedisModule_GetScriptSHAFlags(ctx, argv[1], &flags) == REDISMODULE_ERR) {
+    if (RedisModule_GetScriptSHAFlags(argv[1], &flags) == REDISMODULE_ERR) {
         RedisModule_ReplyWithError(ctx, "Script is not loaded yet");
         return REDISMODULE_OK;
     }
