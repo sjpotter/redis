@@ -8886,6 +8886,19 @@ int RM_GetScriptSHAFlags(RedisModuleString *sha, uint64_t *flags_out) {
     return REDISMODULE_OK;
 }
 
+int RM_GetFunctionFlags(RedisModuleString *function, uint64_t *flags_out) {
+    uint64_t flags;
+    serverAssert(flags_out != NULL);
+
+    if (getFunctionFlags(function->ptr, &flags) == C_ERR) {
+        return REDISMODULE_ERR;
+    }
+
+    *flags_out = mapInternalScriptFlagsToModuleFlags(flags);
+
+    return REDISMODULE_OK;
+}
+
 /* Authenticate the client associated with the context with
  * the provided user. Returns REDISMODULE_OK on success and
  * REDISMODULE_ERR on error.
@@ -12775,6 +12788,7 @@ void moduleRegisterCoreAPI(void) {
     REGISTER_API(ACLAddLogEntry);
     REGISTER_API(GetScriptBodyFlags);
     REGISTER_API(GetScriptSHAFlags);
+    REGISTER_API(GetFunctionFlags);
     REGISTER_API(FreeModuleUser);
     REGISTER_API(DeauthenticateAndCloseClient);
     REGISTER_API(AuthenticateClientWithACLUser);

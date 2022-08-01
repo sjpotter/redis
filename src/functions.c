@@ -615,6 +615,15 @@ uint64_t fcallGetCommandFlags(client *c, uint64_t cmd_flags) {
     return scriptFlagsToCmdFlags(cmd_flags, script_flags);
 }
 
+int getFunctionFlags(sds function_name, uint64_t *flags) {
+    functionInfo *fi = dictFetchValue(curr_functions_lib_ctx->functions, function_name);
+    if (!fi)
+        return C_ERR;
+    *flags = fi->f_flags;
+
+    return C_OK;
+}
+
 static void fcallCommandGeneric(client *c, int ro) {
     robj *function_name = c->argv[1];
     functionInfo *fi = dictFetchValue(curr_functions_lib_ctx->functions, function_name->ptr);

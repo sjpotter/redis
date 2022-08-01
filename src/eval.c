@@ -419,6 +419,7 @@ int getScriptFlagsSHA(sds sha, uint64_t *flags) {
 
     return C_OK;
 }
+
 int getScriptFlagsBody(sds body, uint64_t *flags) {
     return evalExtractShebangFlags(body, flags, NULL, NULL);
 }

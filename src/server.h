@@ -3200,6 +3200,7 @@ void ldbKillForkedSessions(void);
 int ldbPendingChildren(void);
 int getScriptFlagsBody(sds body, uint64_t *flags);
 int getScriptFlagsSHA(sds sha, uint64_t *flags);
+int getFunctionFlags(sds function_name, uint64_t *flags);
 sds luaCreateFunction(client *c, robj *body);
 void luaLdbLineHook(lua_State *lua, lua_Debug *ar);
 void freeLuaScriptsAsync(dict *lua_scripts);

@@ -1216,6 +1216,7 @@ REDISMODULE_API int (*RedisModule_RegisterEnumConfig)(RedisModuleCtx *ctx, const
 REDISMODULE_API int (*RedisModule_LoadConfigs)(RedisModuleCtx *ctx) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_GetScriptBodyFlags)(RedisModuleString *body, uint64_t *flags) REDISMODULE_ATTR;
 REDISMODULE_API int (*RedisModule_GetScriptSHAFlags)(RedisModuleString *sha, uint64_t *flags) REDISMODULE_ATTR;
+REDISMODULE_API int (*RedisModule_GetFunctionFlags)(RedisModuleString *function, uint64_t *flags) REDISMODULE_ATTR;
 
 #define RedisModule_IsAOFClient(id) ((id) == UINT64_MAX)
 
@@ -1534,6 +1535,7 @@ static int RedisModule_Init(RedisModuleCtx *ctx, const char *name, int ver, int 
     REDISMODULE_GET_API(ACLAddLogEntry);
     REDISMODULE_GET_API(GetScriptBodyFlags);
     REDISMODULE_GET_API(GetScriptSHAFlags);
+    REDISMODULE_GET_API(GetFunctionFlags);
     REDISMODULE_GET_API(DeauthenticateAndCloseClient);
     REDISMODULE_GET_API(AuthenticateClientWithACLUser);
     REDISMODULE_GET_API(AuthenticateClientWithUser);
@@ -1558,8 +1560,6 @@ static int RedisModule_Init(RedisModuleCtx *ctx, const char *name, int ver, int 
     REDISMODULE_GET_API(RegisterStringConfig);
     REDISMODULE_GET_API(RegisterEnumConfig);
     REDISMODULE_GET_API(LoadConfigs);
-    REDISMODULE_GET_API(GetScriptBodyFlags);
-    REDISMODULE_GET_API(GetScriptSHAFlags);
 
     if (RedisModule_IsModuleNameBusy && RedisModule_IsModuleNameBusy(name)) return REDISMODULE_ERR;
     RedisModule_SetModuleAttribs(ctx,name,ver,apiver);
