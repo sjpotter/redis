@@ -9,6 +9,15 @@ redis.call('set','x',1)
 return 1"
 }
 
+proc createFunction {flag} {
+    return "#!lua name=mylib
+local function test(keys, args)
+    redis.call('set', 'x', 1)
+    return 1
+end
+redis.register_function{function_name='test', callback=test, flags={${flag}}}"
+}
+
 start_server {tags {"modules script_flags"}} {
     r module load $testmodule
 
@@ -43,5 +52,25 @@ start_server {tags {"modules script_flags"}} {
 
         set sha [r script load [createScript "no-writes,allow-oom"]]
         assert_equal [r script_flags.get_flags_sha $sha] 3
+    }
+
+    test {test module check function flags} {
+        r function load [createFunction "'no-writes'"]
+        assert_equal [r script_flags.get_flags_function test] 1
+
+        r function load replace [createFunction "'allow-oom'"]
+        assert_equal [r script_flags.get_flags_function test] 2
+
+        r function load replace [createFunction "'allow-stale'"]
+        assert_equal [r script_flags.get_flags_function test] 4
+
+        r function load replace [createFunction "'no-cluster'"]
+        assert_equal [r script_flags.get_flags_function test] 8
+
+        r function load replace [createFunction "'allow-cross-slot-keys'"]
+        assert_equal [r script_flags.get_flags_function test] 32
+
+        r function load replace [createFunction "'no-writes', 'allow-oom'"]
+        assert_equal [r script_flags.get_flags_function test] 3
     }
 }
