@@ -43,6 +43,16 @@
                 "name": "group",
                 "type": "string"
             }
-        ]
+        ],
+        "reply_schema": {
+            "anyOf": [
+                {
+                    "const": 1
+                },
+                {
+                    "const": 0
+                }
+            ]
+        }
     }
 }

@@ -60,6 +60,9 @@
 		"optional":true,
                 "multiple": true
             }
-        ]
+        ],
+        "reply_schema": {
+            "description": "can return any possibility"
+        }
     }
 }

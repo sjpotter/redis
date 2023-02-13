@@ -26,6 +26,9 @@
                 "name": "port",
                 "type": "integer"
             }
-        ]
+        ],
+        "reply_schema": {
+            "const": "OK"
+        }
     }
 }

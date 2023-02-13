@@ -87,6 +87,40 @@
                     }
                 ]
             }
-        ]
+        ],
+        "reply_schema": {
+            "anyOf": [
+                {
+                    "description": "Timeout",
+                    "type": "null"
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "anyof": [
+                                        {
+                                            "type": "null"
+                                        },
+                                        {
+                                            "type": "array"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
     }
 }
