@@ -57,6 +57,16 @@
                     }
                 ]
             }
-        ]
+        ],
+        "reply_schema": {
+            "type": "array",
+            "minItems": 1,
+            "items": [
+                {
+                    "description": "The result of the subcommand at the same position",
+                    "type": "integer"
+                }
+            ]
+        }
     }
 }

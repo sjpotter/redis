@@ -133,6 +133,21 @@
                 "key_spec_index": 2,
                 "optional": true
             }
-        ]
+        ],
+        "reply_schema": {
+            "oneOf": [
+                {
+                    "description": "when the store option is specified the command returns the number of sorted elements in the destination list",
+                    "type": "integer"
+                },
+                {
+                    "description": "when not passing the store option the command returns a list of sorted elements",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
     }
 }
