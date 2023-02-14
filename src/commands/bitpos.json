@@ -88,6 +88,10 @@
                     }
                 ]
             }
-        ]
+        ],
+        "reply_schema": {
+            "description": "the command returns the position of the first bit set to 1 or 0 according to the request",
+            "type": "integer"
+        }
     }
 }

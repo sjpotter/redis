@@ -18,6 +18,51 @@
             "NONDETERMINISTIC_OUTPUT",
             "REQUEST_POLICY:ALL_SHARDS",
             "RESPONSE_POLICY:SPECIAL"
-        ]
+        ],
+        "reply_schema": {
+            "type": "object",
+            "properties": {
+                "running_script":{
+                    "anyOf": [
+                        {
+                            "description": "script isn't running",
+                            "type": "null"
+                        },
+                        {
+                            "description": "running script info",
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "command": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "duration_ms": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "engines": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "libraries_count": {
+                                "type": "integer"
+                            },
+                            "functions_count": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

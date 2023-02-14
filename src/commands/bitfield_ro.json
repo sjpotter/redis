@@ -60,7 +60,7 @@
         ],
         "reply_schema": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "items": [
                 {
                     "description": "The result of the subcommand at the same position",

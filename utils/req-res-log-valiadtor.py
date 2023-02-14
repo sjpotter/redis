@@ -253,8 +253,34 @@ if __name__ == '__main__':
             missing_schema.update(result[1])
     command_counter = dict(counter)
 
+<<<<<<< HEAD
     elapsed = time.time() - start
     print(f"Done. ({timedelta(seconds=elapsed)})")
+=======
+                if res.error or res.queued:
+                    continue
+
+                command_counter[req.command] = command_counter.get(req.command, 0) + 1
+
+                if not req.schema:
+                    missing_schema.add(req.command)
+                    continue
+
+                try:
+                    jsonschema.validate(instance=res.json, schema=req.schema,
+                                        cls=Draft7Validator)
+                except jsonschema.ValidationError as err:
+                    print(f"JSON schema validation error on {filename}: {err}")
+                    print(f"argv: {req.argv}")
+                    try:
+                        print(f"Response: {res}")
+                    except UnicodeDecodeError as err:
+                       print("Response: (unprintable)")
+                    print(f"Schema: {json.dumps(req.schema, indent=2)}")
+                    exit(1)
+        
+    print("Done.")
+>>>>>>> c4ca9899c (more fill in for bitfield, bitops, function test suites)
     print("Hits per command:")
     for k, v in sorted(command_counter.items()):
         print(f"  {k}: {v}")
