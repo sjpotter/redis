@@ -53,6 +53,25 @@
                 "optional": true,
                 "since": "2.6.0"
             }
-        ]
+        ],
+        "reply_schema": {
+            "anyOf": [
+                {
+                    "description": "key doesn't exist",
+                    "type": "null"
+                },
+                {
+                    "description": "single element when no COUNT is given",
+                    "type": "string"
+                },
+                {
+                    "description": "when count is given",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
     }
 }
