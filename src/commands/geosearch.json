@@ -207,6 +207,63 @@
                 "type": "pure-token",
                 "optional": true
             }
-        ]
+        ],
+        "reply_schema": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "description": "without any with specifier",
+                        "type": "string"
+                    },
+                    {
+                        "description": "WITHCOORD",
+                        "type": "array",
+                        "items": [
+                            {
+                                "descirption": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "latitude (x)",
+                                "type": "number"
+                            },
+                            {
+                                "description": "longitude (y)",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "WITHDIST",
+                        "type": "array",
+                        "items": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "distance",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "WITHHASH",
+                        "type": "array",
+                        "items": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "hash",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
     }
 }

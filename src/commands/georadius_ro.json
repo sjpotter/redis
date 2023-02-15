@@ -141,6 +141,55 @@
                     }
                 ]
             }
-        ]
+        ],
+        "reply_schema": {
+            "anyOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "WITHCOORD",
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "description": "latitude (x)",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "description": "longitude (y)",
+                                        "type": "number"
+                                    }
+                                ]
+                            },
+                            {
+                                "description": "WITHDIST",
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "description": "distance",
+                                        "type": "number"
+                                    }
+                                ]
+                            },
+                            {
+                                "description": "WITHHASH",
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "description": "hash",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
     }
 }
