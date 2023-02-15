@@ -221,7 +221,7 @@
                         "type": "array",
                         "items": [
                             {
-                                "descirption": "name",
+                                "description": "name",
                                 "type": "string"
                             },
                             {
