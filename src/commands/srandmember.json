@@ -61,7 +61,7 @@
                     "type": "null"
                 },
                 {
-                    "description": "single element when no COUNT is given",
+                    "description": "In case `count` is not given, randomly selected element",
                     "type": "string"
                 },
                 {
