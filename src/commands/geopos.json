@@ -49,9 +49,9 @@
             "description": "An array where each element is a two elements array representing longitude and latitude (x,y) of each member name passed as argument to the command",
             "type": "array",
             "items": {
-                "anyOf": [
+                "oneOf": [
                     {
-                        "description": "element doesn't exist",
+                        "description": "No element is exist",
                         "type": "null"
                     },
                     {
