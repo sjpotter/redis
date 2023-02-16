@@ -854,7 +854,10 @@ struct redisCommandArg CLIENT_KILL_Args[] = {
 commandHistory CLIENT_LIST_History[] = {
 {"2.8.12","Added unique client `id` field."},
 {"5.0.0","Added optional `TYPE` filter."},
-{"6.2.0","Added `laddr` field and the optional `ID` filter."},
+{"6.0.0","Added `user` field."},
+{"6.2.0","Added `argv-mem`, `tot-mem`, `laddr` and `redir` fields and the optional `ID` filter."},
+{"7.0.0","Added `resp`, `multi-mem`, `rbs` and `rbp` fields."},
+{"7.0.3","Added `ssub` field."},
 {0}
 };
 
@@ -1780,13 +1783,6 @@ struct redisCommandArg RENAME_Args[] = {
 {"newkey",ARG_TYPE_KEY,1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* RENAME_ReplySchema reply schema */
-struct jsonObjectElement RENAME_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject RENAME_ReplySchema = {RENAME_ReplySchema_elements,.length=1};
 
 /********** RENAMENX ********************/
 
@@ -3914,59 +3910,6 @@ struct redisCommandArg BRPOP_Args[] = {
 {0}
 };
 
-/* BRPOP_ReplySchema_oneOf_0 reply schema */
-struct jsonObjectElement BRPOP_ReplySchema_oneOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="No element could be popped and the timeout expired."},
-{JSON_TYPE_STRING,"type",.value.string="null"},
-};
-
-struct jsonObject BRPOP_ReplySchema_oneOf_0 = {BRPOP_ReplySchema_oneOf_0_elements,.length=2};
-
-/* BRPOP_ReplySchema_oneOf_1_items_0 reply schema */
-struct jsonObjectElement BRPOP_ReplySchema_oneOf_1_items_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The name of the key where an element was popped "},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject BRPOP_ReplySchema_oneOf_1_items_0 = {BRPOP_ReplySchema_oneOf_1_items_0_elements,.length=2};
-
-/* BRPOP_ReplySchema_oneOf_1_items_1 reply schema */
-struct jsonObjectElement BRPOP_ReplySchema_oneOf_1_items_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The value of the popped element"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject BRPOP_ReplySchema_oneOf_1_items_1 = {BRPOP_ReplySchema_oneOf_1_items_1_elements,.length=2};
-
-/* BRPOP_ReplySchema_oneOf_1_items array reply schema */
-struct jsonObject *BRPOP_ReplySchema_oneOf_1_items[] = {
-&BRPOP_ReplySchema_oneOf_1_items_0,
-&BRPOP_ReplySchema_oneOf_1_items_1,
-};
-
-/* BRPOP_ReplySchema_oneOf_1 reply schema */
-struct jsonObjectElement BRPOP_ReplySchema_oneOf_1_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_INTEGER,"minItems",.value.integer=2},
-{JSON_TYPE_INTEGER,"maxItems",.value.integer=2},
-{JSON_TYPE_ARRAY,"items",.value.array={.objects=BRPOP_ReplySchema_oneOf_1_items,.length=2}},
-};
-
-struct jsonObject BRPOP_ReplySchema_oneOf_1 = {BRPOP_ReplySchema_oneOf_1_elements,.length=4};
-
-/* BRPOP_ReplySchema_oneOf array reply schema */
-struct jsonObject *BRPOP_ReplySchema_oneOf[] = {
-&BRPOP_ReplySchema_oneOf_0,
-&BRPOP_ReplySchema_oneOf_1,
-};
-
-/* BRPOP_ReplySchema reply schema */
-struct jsonObjectElement BRPOP_ReplySchema_elements[] = {
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=BRPOP_ReplySchema_oneOf,.length=2}},
-};
-
-struct jsonObject BRPOP_ReplySchema = {BRPOP_ReplySchema_elements,.length=1};
-
 /********** BRPOPLPUSH ********************/
 
 /* BRPOPLPUSH history */
@@ -4181,22 +4124,6 @@ struct redisCommandArg LRANGE_Args[] = {
 {"stop",ARG_TYPE_INTEGER,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* LRANGE_ReplySchema_items reply schema */
-struct jsonObjectElement LRANGE_ReplySchema_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject LRANGE_ReplySchema_items = {LRANGE_ReplySchema_items_elements,.length=1};
-
-/* LRANGE_ReplySchema reply schema */
-struct jsonObjectElement LRANGE_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="List of elements in the specified range"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&LRANGE_ReplySchema_items},
-};
-
-struct jsonObject LRANGE_ReplySchema = {LRANGE_ReplySchema_elements,.length=3};
 
 /********** LREM ********************/
 
@@ -4537,13 +4464,6 @@ struct redisCommandArg EVAL_Args[] = {
 {0}
 };
 
-/* EVAL_ReplySchema reply schema */
-struct jsonObjectElement EVAL_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the script that is executed"},
-};
-
-struct jsonObject EVAL_ReplySchema = {EVAL_ReplySchema_elements,.length=1};
-
 /********** EVALSHA ********************/
 
 /* EVALSHA history */
@@ -4560,13 +4480,6 @@ struct redisCommandArg EVALSHA_Args[] = {
 {"arg",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_OPTIONAL|CMD_ARG_MULTIPLE},
 {0}
 };
-
-/* EVALSHA_ReplySchema reply schema */
-struct jsonObjectElement EVALSHA_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the script that is executed"},
-};
-
-struct jsonObject EVALSHA_ReplySchema = {EVALSHA_ReplySchema_elements,.length=1};
 
 /********** EVALSHA_RO ********************/
 
@@ -4585,13 +4498,6 @@ struct redisCommandArg EVALSHA_RO_Args[] = {
 {0}
 };
 
-/* EVALSHA_RO_ReplySchema reply schema */
-struct jsonObjectElement EVALSHA_RO_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the script that is executed"},
-};
-
-struct jsonObject EVALSHA_RO_ReplySchema = {EVALSHA_RO_ReplySchema_elements,.length=1};
-
 /********** EVAL_RO ********************/
 
 /* EVAL_RO history */
@@ -4608,13 +4514,6 @@ struct redisCommandArg EVAL_RO_Args[] = {
 {"arg",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_OPTIONAL|CMD_ARG_MULTIPLE},
 {0}
 };
-
-/* EVAL_RO_ReplySchema reply schema */
-struct jsonObjectElement EVAL_RO_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the script that is executed"},
-};
-
-struct jsonObject EVAL_RO_ReplySchema = {EVAL_RO_ReplySchema_elements,.length=1};
 
 /********** FCALL ********************/
 
@@ -4633,13 +4532,6 @@ struct redisCommandArg FCALL_Args[] = {
 {0}
 };
 
-/* FCALL_ReplySchema reply schema */
-struct jsonObjectElement FCALL_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the function that is executed"},
-};
-
-struct jsonObject FCALL_ReplySchema = {FCALL_ReplySchema_elements,.length=1};
-
 /********** FCALL_RO ********************/
 
 /* FCALL_RO history */
@@ -4656,13 +4548,6 @@ struct redisCommandArg FCALL_RO_Args[] = {
 {"arg",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_OPTIONAL|CMD_ARG_MULTIPLE},
 {0}
 };
-
-/* FCALL_RO_ReplySchema reply schema */
-struct jsonObjectElement FCALL_RO_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Return value depends on the function that is executed"},
-};
-
-struct jsonObject FCALL_RO_ReplySchema = {FCALL_RO_ReplySchema_elements,.length=1};
 
 /********** FUNCTION DELETE ********************/
 
@@ -4735,13 +4620,6 @@ const char *FUNCTION_KILL_tips[] = {
 NULL
 };
 
-/* FUNCTION_KILL_ReplySchema reply schema */
-struct jsonObjectElement FUNCTION_KILL_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject FUNCTION_KILL_ReplySchema = {FUNCTION_KILL_ReplySchema_elements,.length=1};
-
 /********** FUNCTION LIST ********************/
 
 /* FUNCTION LIST history */
@@ -4778,14 +4656,6 @@ struct redisCommandArg FUNCTION_LOAD_Args[] = {
 {"function-code",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* FUNCTION_LOAD_ReplySchema reply schema */
-struct jsonObjectElement FUNCTION_LOAD_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The library name that was loaded"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject FUNCTION_LOAD_ReplySchema = {FUNCTION_LOAD_ReplySchema_elements,.length=2};
 
 /********** FUNCTION RESTORE ********************/
 
@@ -4833,9 +4703,9 @@ struct redisCommand FUNCTION_Subcommands[] = {
 {"dump","Dump all functions into a serialized binary payload","O(N) where N is the number of functions","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_DUMP_History,FUNCTION_DUMP_tips,functionDumpCommand,2,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING},
 {"flush","Deleting all functions","O(N) where N is the number of functions deleted","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_FLUSH_History,FUNCTION_FLUSH_tips,functionFlushCommand,-2,CMD_NOSCRIPT|CMD_WRITE,ACL_CATEGORY_SCRIPTING,.args=FUNCTION_FLUSH_Args},
 {"help","Show helpful text about the different subcommands","O(1)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_HELP_History,FUNCTION_HELP_tips,functionHelpCommand,2,CMD_LOADING|CMD_STALE,ACL_CATEGORY_SCRIPTING},
-{"kill","Kill the function currently in execution.","O(1)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_KILL_History,FUNCTION_KILL_tips,functionKillCommand,2,CMD_NOSCRIPT|CMD_ALLOW_BUSY,ACL_CATEGORY_SCRIPTING,.reply_schema=&FUNCTION_KILL_ReplySchema},
+{"kill","Kill the function currently in execution.","O(1)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_KILL_History,FUNCTION_KILL_tips,functionKillCommand,2,CMD_NOSCRIPT|CMD_ALLOW_BUSY,ACL_CATEGORY_SCRIPTING},
 {"list","List information about all the functions","O(N) where N is the number of functions","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_LIST_History,FUNCTION_LIST_tips,functionListCommand,-2,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=FUNCTION_LIST_Args},
-{"load","Create a function with the given arguments (name, code, description)","O(1) (considering compilation time is redundant)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_LOAD_History,FUNCTION_LOAD_tips,functionLoadCommand,-3,CMD_NOSCRIPT|CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_SCRIPTING,.args=FUNCTION_LOAD_Args,.reply_schema=&FUNCTION_LOAD_ReplySchema},
+{"load","Create a function with the given arguments (name, code, description)","O(1) (considering compilation time is redundant)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_LOAD_History,FUNCTION_LOAD_tips,functionLoadCommand,-3,CMD_NOSCRIPT|CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_SCRIPTING,.args=FUNCTION_LOAD_Args},
 {"restore","Restore all the functions on the given payload","O(N) where N is the number of functions on the payload","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_RESTORE_History,FUNCTION_RESTORE_tips,functionRestoreCommand,-3,CMD_NOSCRIPT|CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_SCRIPTING,.args=FUNCTION_RESTORE_Args},
 {"stats","Return information about the function currently running (name, description, duration)","O(1)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_STATS_History,FUNCTION_STATS_tips,functionStatsCommand,2,CMD_NOSCRIPT|CMD_ALLOW_BUSY,ACL_CATEGORY_SCRIPTING},
 {0}
@@ -4871,13 +4741,6 @@ struct redisCommandArg SCRIPT_DEBUG_Args[] = {
 {0}
 };
 
-/* SCRIPT_DEBUG_ReplySchema reply schema */
-struct jsonObjectElement SCRIPT_DEBUG_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject SCRIPT_DEBUG_ReplySchema = {SCRIPT_DEBUG_ReplySchema_elements,.length=1};
-
 /********** SCRIPT EXISTS ********************/
 
 /* SCRIPT EXISTS history */
@@ -4895,44 +4758,6 @@ struct redisCommandArg SCRIPT_EXISTS_Args[] = {
 {"sha1",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_MULTIPLE},
 {0}
 };
-
-/* SCRIPT_EXISTS_ReplySchema_items_anyOf_0 reply schema */
-struct jsonObjectElement SCRIPT_EXISTS_ReplySchema_items_anyOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="sha1 hash exists in script cache"},
-{JSON_TYPE_INTEGER,"const",.value.integer=1},
-};
-
-struct jsonObject SCRIPT_EXISTS_ReplySchema_items_anyOf_0 = {SCRIPT_EXISTS_ReplySchema_items_anyOf_0_elements,.length=2};
-
-/* SCRIPT_EXISTS_ReplySchema_items_anyOf_1 reply schema */
-struct jsonObjectElement SCRIPT_EXISTS_ReplySchema_items_anyOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="sha1 hash does not exist in script cache"},
-{JSON_TYPE_INTEGER,"const",.value.integer=0},
-};
-
-struct jsonObject SCRIPT_EXISTS_ReplySchema_items_anyOf_1 = {SCRIPT_EXISTS_ReplySchema_items_anyOf_1_elements,.length=2};
-
-/* SCRIPT_EXISTS_ReplySchema_items_anyOf array reply schema */
-struct jsonObject *SCRIPT_EXISTS_ReplySchema_items_anyOf[] = {
-&SCRIPT_EXISTS_ReplySchema_items_anyOf_0,
-&SCRIPT_EXISTS_ReplySchema_items_anyOf_1,
-};
-
-/* SCRIPT_EXISTS_ReplySchema_items reply schema */
-struct jsonObjectElement SCRIPT_EXISTS_ReplySchema_items_elements[] = {
-{JSON_TYPE_ARRAY,"anyOf",.value.array={.objects=SCRIPT_EXISTS_ReplySchema_items_anyOf,.length=2}},
-};
-
-struct jsonObject SCRIPT_EXISTS_ReplySchema_items = {SCRIPT_EXISTS_ReplySchema_items_elements,.length=1};
-
-/* SCRIPT_EXISTS_ReplySchema reply schema */
-struct jsonObjectElement SCRIPT_EXISTS_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="An array of integers that correspond to the specified SHA1 digest arguments."},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&SCRIPT_EXISTS_ReplySchema_items},
-};
-
-struct jsonObject SCRIPT_EXISTS_ReplySchema = {SCRIPT_EXISTS_ReplySchema_elements,.length=3};
 
 /********** SCRIPT FLUSH ********************/
 
@@ -4962,13 +4787,6 @@ struct redisCommandArg SCRIPT_FLUSH_Args[] = {
 {0}
 };
 
-/* SCRIPT_FLUSH_ReplySchema reply schema */
-struct jsonObjectElement SCRIPT_FLUSH_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject SCRIPT_FLUSH_ReplySchema = {SCRIPT_FLUSH_ReplySchema_elements,.length=1};
-
 /********** SCRIPT HELP ********************/
 
 /* SCRIPT HELP history */
@@ -4989,13 +4807,6 @@ const char *SCRIPT_KILL_tips[] = {
 NULL
 };
 
-/* SCRIPT_KILL_ReplySchema reply schema */
-struct jsonObjectElement SCRIPT_KILL_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject SCRIPT_KILL_ReplySchema = {SCRIPT_KILL_ReplySchema_elements,.length=1};
-
 /********** SCRIPT LOAD ********************/
 
 /* SCRIPT LOAD history */
@@ -5014,22 +4825,14 @@ struct redisCommandArg SCRIPT_LOAD_Args[] = {
 {0}
 };
 
-/* SCRIPT_LOAD_ReplySchema reply schema */
-struct jsonObjectElement SCRIPT_LOAD_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The SHA1 digest of the script added into the script cache"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject SCRIPT_LOAD_ReplySchema = {SCRIPT_LOAD_ReplySchema_elements,.length=2};
-
 /* SCRIPT command table */
 struct redisCommand SCRIPT_Subcommands[] = {
-{"debug","Set the debug mode for executed scripts.","O(1)","3.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_DEBUG_History,SCRIPT_DEBUG_tips,scriptCommand,3,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_DEBUG_Args,.reply_schema=&SCRIPT_DEBUG_ReplySchema},
-{"exists","Check existence of scripts in the script cache.","O(N) with N being the number of scripts to check (so checking a single script is an O(1) operation).","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_EXISTS_History,SCRIPT_EXISTS_tips,scriptCommand,-3,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_EXISTS_Args,.reply_schema=&SCRIPT_EXISTS_ReplySchema},
-{"flush","Remove all the scripts from the script cache.","O(N) with N being the number of scripts in cache","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_FLUSH_History,SCRIPT_FLUSH_tips,scriptCommand,-2,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_FLUSH_Args,.reply_schema=&SCRIPT_FLUSH_ReplySchema},
+{"debug","Set the debug mode for executed scripts.","O(1)","3.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_DEBUG_History,SCRIPT_DEBUG_tips,scriptCommand,3,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_DEBUG_Args},
+{"exists","Check existence of scripts in the script cache.","O(N) with N being the number of scripts to check (so checking a single script is an O(1) operation).","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_EXISTS_History,SCRIPT_EXISTS_tips,scriptCommand,-3,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_EXISTS_Args},
+{"flush","Remove all the scripts from the script cache.","O(N) with N being the number of scripts in cache","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_FLUSH_History,SCRIPT_FLUSH_tips,scriptCommand,-2,CMD_NOSCRIPT,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_FLUSH_Args},
 {"help","Show helpful text about the different subcommands","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_HELP_History,SCRIPT_HELP_tips,scriptCommand,2,CMD_LOADING|CMD_STALE,ACL_CATEGORY_SCRIPTING},
-{"kill","Kill the script currently in execution.","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_KILL_History,SCRIPT_KILL_tips,scriptCommand,2,CMD_NOSCRIPT|CMD_ALLOW_BUSY,ACL_CATEGORY_SCRIPTING,.reply_schema=&SCRIPT_KILL_ReplySchema},
-{"load","Load the specified Lua script into the script cache.","O(N) with N being the length in bytes of the script body.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_LOAD_History,SCRIPT_LOAD_tips,scriptCommand,3,CMD_NOSCRIPT|CMD_STALE,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_LOAD_Args,.reply_schema=&SCRIPT_LOAD_ReplySchema},
+{"kill","Kill the script currently in execution.","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_KILL_History,SCRIPT_KILL_tips,scriptCommand,2,CMD_NOSCRIPT|CMD_ALLOW_BUSY,ACL_CATEGORY_SCRIPTING},
+{"load","Load the specified Lua script into the script cache.","O(N) with N being the length in bytes of the script body.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_LOAD_History,SCRIPT_LOAD_tips,scriptCommand,3,CMD_NOSCRIPT|CMD_STALE,ACL_CATEGORY_SCRIPTING,.args=SCRIPT_LOAD_Args},
 {0}
 };
 
@@ -5351,7 +5154,7 @@ struct redisCommandArg SENTINEL_SLAVES_Args[] = {
 /* SENTINEL command table */
 struct redisCommand SENTINEL_Subcommands[] = {
 {"ckquorum","Check for a Sentinel quorum",NULL,"2.8.4",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_CKQUORUM_History,SENTINEL_CKQUORUM_tips,sentinelCommand,3,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.args=SENTINEL_CKQUORUM_Args},
-{"config","Configure Sentinel","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_CONFIG_History,SENTINEL_CONFIG_tips,sentinelCommand,-3,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.args=SENTINEL_CONFIG_Args},
+{"config","Configure Sentinel","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_CONFIG_History,SENTINEL_CONFIG_tips,sentinelCommand,-4,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.args=SENTINEL_CONFIG_Args},
 {"debug","List or update the current configurable parameters","O(N) where N is the number of configurable parameters","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_DEBUG_History,SENTINEL_DEBUG_tips,sentinelCommand,-2,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.args=SENTINEL_DEBUG_Args},
 {"failover","Force a failover",NULL,"2.8.4",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_FAILOVER_History,SENTINEL_FAILOVER_tips,sentinelCommand,3,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.args=SENTINEL_FAILOVER_Args},
 {"flushconfig","Rewrite configuration file","O(1)","2.8.4",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_FLUSHCONFIG_History,SENTINEL_FLUSHCONFIG_tips,sentinelCommand,2,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0},
@@ -5614,7 +5417,10 @@ struct jsonObject ACL_LOAD_ReplySchema = {ACL_LOAD_ReplySchema_elements,.length=
 /********** ACL LOG ********************/
 
 /* ACL LOG history */
-#define ACL_LOG_History NULL
+commandHistory ACL_LOG_History[] = {
+{"7.2.0","Added entry ID, timestamp created, and timestamp last updated."},
+{0}
+};
 
 /* ACL LOG tips */
 #define ACL_LOG_tips NULL
@@ -5848,6 +5654,14 @@ struct redisCommand ACL_Subcommands[] = {
 /* BGREWRITEAOF tips */
 #define BGREWRITEAOF_tips NULL
 
+/* BGREWRITEAOF_ReplySchema reply schema */
+struct jsonObjectElement BGREWRITEAOF_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="A simple string reply indicating that the rewriting started or is about to start ASAP"},
+{JSON_TYPE_STRING,"type",.value.string="string"},
+};
+
+struct jsonObject BGREWRITEAOF_ReplySchema = {BGREWRITEAOF_ReplySchema_elements,.length=2};
+
 /********** BGSAVE ********************/
 
 /* BGSAVE history */
@@ -6044,13 +5858,6 @@ struct jsonObject CONFIG_GET_ReplySchema = {CONFIG_GET_ReplySchema_elements,.len
 /* CONFIG RESETSTAT tips */
 #define CONFIG_RESETSTAT_tips NULL
 
-/* CONFIG_RESETSTAT_ReplySchema reply schema */
-struct jsonObjectElement CONFIG_RESETSTAT_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject CONFIG_RESETSTAT_ReplySchema = {CONFIG_RESETSTAT_ReplySchema_elements,.length=1};
-
 /********** CONFIG REWRITE ********************/
 
 /* CONFIG REWRITE history */
@@ -6098,7 +5905,7 @@ struct jsonObject CONFIG_SET_ReplySchema = {CONFIG_SET_ReplySchema_elements,.len
 struct redisCommand CONFIG_Subcommands[] = {
 {"get","Get the values of configuration parameters","O(N) when N is the number of configuration parameters provided","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_GET_History,CONFIG_GET_tips,configGetCommand,-3,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0,.args=CONFIG_GET_Args,.reply_schema=&CONFIG_GET_ReplySchema},
 {"help","Show helpful text about the different subcommands","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_HELP_History,CONFIG_HELP_tips,configHelpCommand,2,CMD_LOADING|CMD_STALE,0},
-{"resetstat","Reset the stats returned by INFO","O(1)","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_RESETSTAT_History,CONFIG_RESETSTAT_tips,configResetStatCommand,2,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0,.reply_schema=&CONFIG_RESETSTAT_ReplySchema},
+{"resetstat","Reset the stats returned by INFO","O(1)","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_RESETSTAT_History,CONFIG_RESETSTAT_tips,configResetStatCommand,2,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0},
 {"rewrite","Rewrite the configuration file with the in memory configuration","O(1)","2.8.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_REWRITE_History,CONFIG_REWRITE_tips,configRewriteCommand,2,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0},
 {"set","Set configuration parameters to the given values","O(N) when N is the number of configuration parameters provided","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_SET_History,CONFIG_SET_tips,configSetCommand,-4,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0,.args=CONFIG_SET_Args,.reply_schema=&CONFIG_SET_ReplySchema},
 {0}
@@ -6625,13 +6432,6 @@ struct redisCommandArg PSYNC_Args[] = {
 /* REPLCONF tips */
 #define REPLCONF_tips NULL
 
-/* REPLCONF_ReplySchema reply schema */
-struct jsonObjectElement REPLCONF_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject REPLCONF_ReplySchema = {REPLCONF_ReplySchema_elements,.length=1};
-
 /********** REPLICAOF ********************/
 
 /* REPLICAOF history */
@@ -6646,15 +6446,6 @@ struct redisCommandArg REPLICAOF_Args[] = {
 {"port",ARG_TYPE_INTEGER,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* REPLICAOF_ReplySchema reply schema */
-struct jsonObjectElement REPLICAOF_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="replicaOf status"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-{JSON_TYPE_STRING,"pattern",.value.string="OK*"},
-};
-
-struct jsonObject REPLICAOF_ReplySchema = {REPLICAOF_ReplySchema_elements,.length=3};
 
 /********** RESTORE_ASKING ********************/
 
@@ -6738,15 +6529,6 @@ struct redisCommandArg SLAVEOF_Args[] = {
 {"port",ARG_TYPE_INTEGER,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* SLAVEOF_ReplySchema reply schema */
-struct jsonObjectElement SLAVEOF_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="slaveOf status"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-{JSON_TYPE_STRING,"pattern",.value.string="OK*"},
-};
-
-struct jsonObject SLAVEOF_ReplySchema = {SLAVEOF_ReplySchema_elements,.length=3};
 
 /********** SLOWLOG GET ********************/
 
@@ -6833,13 +6615,6 @@ struct redisCommandArg SWAPDB_Args[] = {
 {"index2",ARG_TYPE_INTEGER,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* SWAPDB_ReplySchema reply schema */
-struct jsonObjectElement SWAPDB_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject SWAPDB_ReplySchema = {SWAPDB_ReplySchema_elements,.length=1};
 
 /********** SYNC ********************/
 
@@ -8424,15 +8199,6 @@ struct redisCommandArg XACK_Args[] = {
 {0}
 };
 
-/* XACK_ReplySchema reply schema */
-struct jsonObjectElement XACK_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The command returns the number of messages successfully acknowledged. Certain message IDs may no longer be part of the PEL (for example because they have already been acknowledged), and XACK will not count them as successfully acknowledged."},
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-{JSON_TYPE_INTEGER,"minimum",.value.integer=0},
-};
-
-struct jsonObject XACK_ReplySchema = {XACK_ReplySchema_elements,.length=3};
-
 /********** XADD ********************/
 
 /* XADD history */
@@ -8494,6 +8260,36 @@ struct redisCommandArg XADD_Args[] = {
 {"data",ARG_TYPE_BLOCK,-1,NULL,NULL,NULL,CMD_ARG_MULTIPLE,.subargs=XADD_data_Subargs},
 {0}
 };
+
+/* XADD_ReplySchema_oneOf_0 reply schema */
+struct jsonObjectElement XADD_ReplySchema_oneOf_0_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The ID of the added entry. The ID is the one auto-generated if * is passed as ID argument, otherwise the command just returns the same ID specified by the user during insertion."},
+{JSON_TYPE_STRING,"type",.value.string="string"},
+{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
+};
+
+struct jsonObject XADD_ReplySchema_oneOf_0 = {XADD_ReplySchema_oneOf_0_elements,.length=3};
+
+/* XADD_ReplySchema_oneOf_1 reply schema */
+struct jsonObjectElement XADD_ReplySchema_oneOf_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The NOMKSTREAM option is given and the key doesn't exist."},
+{JSON_TYPE_STRING,"type",.value.string="null"},
+};
+
+struct jsonObject XADD_ReplySchema_oneOf_1 = {XADD_ReplySchema_oneOf_1_elements,.length=2};
+
+/* XADD_ReplySchema_oneOf array reply schema */
+struct jsonObject *XADD_ReplySchema_oneOf[] = {
+&XADD_ReplySchema_oneOf_0,
+&XADD_ReplySchema_oneOf_1,
+};
+
+/* XADD_ReplySchema reply schema */
+struct jsonObjectElement XADD_ReplySchema_elements[] = {
+{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XADD_ReplySchema_oneOf,.length=2}},
+};
+
+struct jsonObject XADD_ReplySchema = {XADD_ReplySchema_elements,.length=1};
 
 /********** XAUTOCLAIM ********************/
 
@@ -8673,89 +8469,6 @@ struct redisCommandArg XCLAIM_Args[] = {
 {0}
 };
 
-/* XCLAIM_ReplySchema_anyOf_0_items reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_0_items_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Entry ID"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_0_items = {XCLAIM_ReplySchema_anyOf_0_items_elements,.length=3};
-
-/* XCLAIM_ReplySchema_anyOf_0 reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="If JUSTID option is specified, return just an array of IDs of messages successfully claimed"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&XCLAIM_ReplySchema_anyOf_0_items},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_0 = {XCLAIM_ReplySchema_anyOf_0_elements,.length=3};
-
-/* XCLAIM_ReplySchema_anyOf_1_items_items_0 reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_1_items_items_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Entry ID"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_1_items_items_0 = {XCLAIM_ReplySchema_anyOf_1_items_items_0_elements,.length=3};
-
-/* XCLAIM_ReplySchema_anyOf_1_items_items_1_items reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_1_items_items_1_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_1_items_items_1_items = {XCLAIM_ReplySchema_anyOf_1_items_items_1_items_elements,.length=1};
-
-/* XCLAIM_ReplySchema_anyOf_1_items_items_1 reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_1_items_items_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Data"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&XCLAIM_ReplySchema_anyOf_1_items_items_1_items},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_1_items_items_1 = {XCLAIM_ReplySchema_anyOf_1_items_items_1_elements,.length=3};
-
-/* XCLAIM_ReplySchema_anyOf_1_items_items array reply schema */
-struct jsonObject *XCLAIM_ReplySchema_anyOf_1_items_items[] = {
-&XCLAIM_ReplySchema_anyOf_1_items_items_0,
-&XCLAIM_ReplySchema_anyOf_1_items_items_1,
-};
-
-/* XCLAIM_ReplySchema_anyOf_1_items reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_1_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_INTEGER,"minItems",.value.integer=2},
-{JSON_TYPE_INTEGER,"maxItems",.value.integer=2},
-{JSON_TYPE_ARRAY,"items",.value.array={.objects=XCLAIM_ReplySchema_anyOf_1_items_items,.length=2}},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_1_items = {XCLAIM_ReplySchema_anyOf_1_items_elements,.length=4};
-
-/* XCLAIM_ReplySchema_anyOf_1 reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_anyOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="array of stream entries that contains each entry as an array of 2 elements, the Entry ID and the entry data itself"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_BOOLEAN,"uniqueItems",.value.boolean=1},
-{JSON_TYPE_OBJECT,"items",.value.object=&XCLAIM_ReplySchema_anyOf_1_items},
-};
-
-struct jsonObject XCLAIM_ReplySchema_anyOf_1 = {XCLAIM_ReplySchema_anyOf_1_elements,.length=4};
-
-/* XCLAIM_ReplySchema_anyOf array reply schema */
-struct jsonObject *XCLAIM_ReplySchema_anyOf[] = {
-&XCLAIM_ReplySchema_anyOf_0,
-&XCLAIM_ReplySchema_anyOf_1,
-};
-
-/* XCLAIM_ReplySchema reply schema */
-struct jsonObjectElement XCLAIM_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Stream entries with IDs matching the specified range."},
-{JSON_TYPE_ARRAY,"anyOf",.value.array={.objects=XCLAIM_ReplySchema_anyOf,.length=2}},
-};
-
-struct jsonObject XCLAIM_ReplySchema = {XCLAIM_ReplySchema_elements,.length=2};
-
 /********** XDEL ********************/
 
 /* XDEL history */
@@ -8770,6 +8483,15 @@ struct redisCommandArg XDEL_Args[] = {
 {"id",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_MULTIPLE},
 {0}
 };
+
+/* XDEL_ReplySchema reply schema */
+struct jsonObjectElement XDEL_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The number of entries actually deleted"},
+{JSON_TYPE_STRING,"type",.value.string="integer"},
+{JSON_TYPE_INTEGER,"minimum",.value.integer=0},
+};
+
+struct jsonObject XDEL_ReplySchema = {XDEL_ReplySchema_elements,.length=3};
 
 /********** XGROUP CREATE ********************/
 
@@ -8799,13 +8521,6 @@ struct redisCommandArg XGROUP_CREATE_Args[] = {
 {0}
 };
 
-/* XGROUP_CREATE_ReplySchema reply schema */
-struct jsonObjectElement XGROUP_CREATE_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject XGROUP_CREATE_ReplySchema = {XGROUP_CREATE_ReplySchema_elements,.length=1};
-
 /********** XGROUP CREATECONSUMER ********************/
 
 /* XGROUP CREATECONSUMER history */
@@ -8821,34 +8536,6 @@ struct redisCommandArg XGROUP_CREATECONSUMER_Args[] = {
 {"consumer",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* XGROUP_CREATECONSUMER_ReplySchema_oneOf_0 reply schema */
-struct jsonObjectElement XGROUP_CREATECONSUMER_ReplySchema_oneOf_0_elements[] = {
-{JSON_TYPE_INTEGER,"const",.value.integer=1},
-};
-
-struct jsonObject XGROUP_CREATECONSUMER_ReplySchema_oneOf_0 = {XGROUP_CREATECONSUMER_ReplySchema_oneOf_0_elements,.length=1};
-
-/* XGROUP_CREATECONSUMER_ReplySchema_oneOf_1 reply schema */
-struct jsonObjectElement XGROUP_CREATECONSUMER_ReplySchema_oneOf_1_elements[] = {
-{JSON_TYPE_INTEGER,"const",.value.integer=0},
-};
-
-struct jsonObject XGROUP_CREATECONSUMER_ReplySchema_oneOf_1 = {XGROUP_CREATECONSUMER_ReplySchema_oneOf_1_elements,.length=1};
-
-/* XGROUP_CREATECONSUMER_ReplySchema_oneOf array reply schema */
-struct jsonObject *XGROUP_CREATECONSUMER_ReplySchema_oneOf[] = {
-&XGROUP_CREATECONSUMER_ReplySchema_oneOf_0,
-&XGROUP_CREATECONSUMER_ReplySchema_oneOf_1,
-};
-
-/* XGROUP_CREATECONSUMER_ReplySchema reply schema */
-struct jsonObjectElement XGROUP_CREATECONSUMER_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The number of created consumers (0 or 1)"},
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XGROUP_CREATECONSUMER_ReplySchema_oneOf,.length=2}},
-};
-
-struct jsonObject XGROUP_CREATECONSUMER_ReplySchema = {XGROUP_CREATECONSUMER_ReplySchema_elements,.length=2};
 
 /********** XGROUP DELCONSUMER ********************/
 
@@ -8866,15 +8553,6 @@ struct redisCommandArg XGROUP_DELCONSUMER_Args[] = {
 {0}
 };
 
-/* XGROUP_DELCONSUMER_ReplySchema reply schema */
-struct jsonObjectElement XGROUP_DELCONSUMER_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The number of pending messages that were yet associated with such a consumer"},
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-{JSON_TYPE_STRING,"minimum",.value.string="0"},
-};
-
-struct jsonObject XGROUP_DELCONSUMER_ReplySchema = {XGROUP_DELCONSUMER_ReplySchema_elements,.length=3};
-
 /********** XGROUP DESTROY ********************/
 
 /* XGROUP DESTROY history */
@@ -8889,34 +8567,6 @@ struct redisCommandArg XGROUP_DESTROY_Args[] = {
 {"group",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* XGROUP_DESTROY_ReplySchema_oneOf_0 reply schema */
-struct jsonObjectElement XGROUP_DESTROY_ReplySchema_oneOf_0_elements[] = {
-{JSON_TYPE_INTEGER,"const",.value.integer=1},
-};
-
-struct jsonObject XGROUP_DESTROY_ReplySchema_oneOf_0 = {XGROUP_DESTROY_ReplySchema_oneOf_0_elements,.length=1};
-
-/* XGROUP_DESTROY_ReplySchema_oneOf_1 reply schema */
-struct jsonObjectElement XGROUP_DESTROY_ReplySchema_oneOf_1_elements[] = {
-{JSON_TYPE_INTEGER,"const",.value.integer=0},
-};
-
-struct jsonObject XGROUP_DESTROY_ReplySchema_oneOf_1 = {XGROUP_DESTROY_ReplySchema_oneOf_1_elements,.length=1};
-
-/* XGROUP_DESTROY_ReplySchema_oneOf array reply schema */
-struct jsonObject *XGROUP_DESTROY_ReplySchema_oneOf[] = {
-&XGROUP_DESTROY_ReplySchema_oneOf_0,
-&XGROUP_DESTROY_ReplySchema_oneOf_1,
-};
-
-/* XGROUP_DESTROY_ReplySchema reply schema */
-struct jsonObjectElement XGROUP_DESTROY_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The number of destroyed consumer groups (0 or 1)"},
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XGROUP_DESTROY_ReplySchema_oneOf,.length=2}},
-};
-
-struct jsonObject XGROUP_DESTROY_ReplySchema = {XGROUP_DESTROY_ReplySchema_elements,.length=2};
 
 /********** XGROUP HELP ********************/
 
@@ -8953,21 +8603,14 @@ struct redisCommandArg XGROUP_SETID_Args[] = {
 {0}
 };
 
-/* XGROUP_SETID_ReplySchema reply schema */
-struct jsonObjectElement XGROUP_SETID_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
-};
-
-struct jsonObject XGROUP_SETID_ReplySchema = {XGROUP_SETID_ReplySchema_elements,.length=1};
-
 /* XGROUP command table */
 struct redisCommand XGROUP_Subcommands[] = {
-{"create","Create a consumer group.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_CREATE_History,XGROUP_CREATE_tips,xgroupCommand,-5,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_CREATE_Args,.reply_schema=&XGROUP_CREATE_ReplySchema},
-{"createconsumer","Create a consumer in a consumer group.","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_CREATECONSUMER_History,XGROUP_CREATECONSUMER_tips,xgroupCommand,5,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_CREATECONSUMER_Args,.reply_schema=&XGROUP_CREATECONSUMER_ReplySchema},
-{"delconsumer","Delete a consumer from a consumer group.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_DELCONSUMER_History,XGROUP_DELCONSUMER_tips,xgroupCommand,5,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_DELCONSUMER_Args,.reply_schema=&XGROUP_DELCONSUMER_ReplySchema},
-{"destroy","Destroy a consumer group.","O(N) where N is the number of entries in the group's pending entries list (PEL).","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_DESTROY_History,XGROUP_DESTROY_tips,xgroupCommand,4,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_DESTROY_Args,.reply_schema=&XGROUP_DESTROY_ReplySchema},
+{"create","Create a consumer group.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_CREATE_History,XGROUP_CREATE_tips,xgroupCommand,-5,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_CREATE_Args},
+{"createconsumer","Create a consumer in a consumer group.","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_CREATECONSUMER_History,XGROUP_CREATECONSUMER_tips,xgroupCommand,5,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_CREATECONSUMER_Args},
+{"delconsumer","Delete a consumer from a consumer group.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_DELCONSUMER_History,XGROUP_DELCONSUMER_tips,xgroupCommand,5,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_DELCONSUMER_Args},
+{"destroy","Destroy a consumer group.","O(N) where N is the number of entries in the group's pending entries list (PEL).","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_DESTROY_History,XGROUP_DESTROY_tips,xgroupCommand,4,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_DESTROY_Args},
 {"help","Show helpful text about the different subcommands","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_HELP_History,XGROUP_HELP_tips,xgroupCommand,2,CMD_LOADING|CMD_STALE,ACL_CATEGORY_STREAM},
-{"setid","Set a consumer group to an arbitrary last delivered ID value.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_SETID_History,XGROUP_SETID_tips,xgroupCommand,-5,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_SETID_Args,.reply_schema=&XGROUP_SETID_ReplySchema},
+{"setid","Set a consumer group to an arbitrary last delivered ID value.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_SETID_History,XGROUP_SETID_tips,xgroupCommand,-5,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XGROUP_SETID_Args},
 {0}
 };
 
@@ -8996,62 +8639,6 @@ struct redisCommandArg XINFO_CONSUMERS_Args[] = {
 {"group",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* XINFO_CONSUMERS_ReplySchema_items_properties_name reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_properties_name_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items_properties_name = {XINFO_CONSUMERS_ReplySchema_items_properties_name_elements,.length=1};
-
-/* XINFO_CONSUMERS_ReplySchema_items_properties_pending reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_properties_pending_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items_properties_pending = {XINFO_CONSUMERS_ReplySchema_items_properties_pending_elements,.length=1};
-
-/* XINFO_CONSUMERS_ReplySchema_items_properties_idle reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_properties_idle_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items_properties_idle = {XINFO_CONSUMERS_ReplySchema_items_properties_idle_elements,.length=1};
-
-/* XINFO_CONSUMERS_ReplySchema_items_properties_inactive reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_properties_inactive_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items_properties_inactive = {XINFO_CONSUMERS_ReplySchema_items_properties_inactive_elements,.length=1};
-
-/* XINFO_CONSUMERS_ReplySchema_items_properties reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_properties_elements[] = {
-{JSON_TYPE_OBJECT,"name",.value.object=&XINFO_CONSUMERS_ReplySchema_items_properties_name},
-{JSON_TYPE_OBJECT,"pending",.value.object=&XINFO_CONSUMERS_ReplySchema_items_properties_pending},
-{JSON_TYPE_OBJECT,"idle",.value.object=&XINFO_CONSUMERS_ReplySchema_items_properties_idle},
-{JSON_TYPE_OBJECT,"inactive",.value.object=&XINFO_CONSUMERS_ReplySchema_items_properties_inactive},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items_properties = {XINFO_CONSUMERS_ReplySchema_items_properties_elements,.length=4};
-
-/* XINFO_CONSUMERS_ReplySchema_items reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="object"},
-{JSON_TYPE_OBJECT,"properties",.value.object=&XINFO_CONSUMERS_ReplySchema_items_properties},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema_items = {XINFO_CONSUMERS_ReplySchema_items_elements,.length=2};
-
-/* XINFO_CONSUMERS_ReplySchema reply schema */
-struct jsonObjectElement XINFO_CONSUMERS_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Array list of consumers"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_BOOLEAN,"uniqueItems",.value.boolean=1},
-{JSON_TYPE_OBJECT,"items",.value.object=&XINFO_CONSUMERS_ReplySchema_items},
-};
-
-struct jsonObject XINFO_CONSUMERS_ReplySchema = {XINFO_CONSUMERS_ReplySchema_elements,.length=4};
 
 /********** XINFO GROUPS ********************/
 
@@ -9826,7 +9413,7 @@ struct jsonObject XINFO_STREAM_ReplySchema = {XINFO_STREAM_ReplySchema_elements,
 
 /* XINFO command table */
 struct redisCommand XINFO_Subcommands[] = {
-{"consumers","List the consumers in a consumer group","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_CONSUMERS_History,XINFO_CONSUMERS_tips,xinfoCommand,4,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XINFO_CONSUMERS_Args,.reply_schema=&XINFO_CONSUMERS_ReplySchema},
+{"consumers","List the consumers in a consumer group","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_CONSUMERS_History,XINFO_CONSUMERS_tips,xinfoCommand,4,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XINFO_CONSUMERS_Args},
 {"groups","List the consumer groups of a stream","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_GROUPS_History,XINFO_GROUPS_tips,xinfoCommand,3,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XINFO_GROUPS_Args,.reply_schema=&XINFO_GROUPS_ReplySchema},
 {"help","Show helpful text about the different subcommands","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_HELP_History,XINFO_HELP_tips,xinfoCommand,2,CMD_LOADING|CMD_STALE,ACL_CATEGORY_STREAM},
 {"stream","Get information about a stream","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_STREAM_History,XINFO_STREAM_tips,xinfoCommand,-3,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XINFO_STREAM_Args,.reply_schema=&XINFO_STREAM_ReplySchema},
@@ -9854,6 +9441,15 @@ struct redisCommandArg XLEN_Args[] = {
 {"key",ARG_TYPE_KEY,0,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
+
+/* XLEN_ReplySchema reply schema */
+struct jsonObjectElement XLEN_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The number of entries of the stream at key"},
+{JSON_TYPE_STRING,"type",.value.string="integer"},
+{JSON_TYPE_INTEGER,"minimum",.value.integer=0},
+};
+
+struct jsonObject XLEN_ReplySchema = {XLEN_ReplySchema_elements,.length=3};
 
 /********** XPENDING ********************/
 
@@ -10140,6 +9736,86 @@ struct redisCommandArg XREAD_Args[] = {
 {0}
 };
 
+/* XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_0 reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_0_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="Steam id"},
+{JSON_TYPE_STRING,"type",.value.string="string"},
+{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_0 = {XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_0_elements,.length=3};
+
+/* XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_items reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_items_elements[] = {
+{JSON_TYPE_STRING,"type",.value.string="string"},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_items = {XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_items_elements,.length=1};
+
+/* XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1 reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="Array of field-value pairs"},
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_OBJECT,"items",.value.object=&XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_items},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1 = {XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1_elements,.length=3};
+
+/* XREAD_ReplySchema_oneOf_0_additionalProperties_items_items array reply schema */
+struct jsonObject *XREAD_ReplySchema_oneOf_0_additionalProperties_items_items[] = {
+&XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_0,
+&XREAD_ReplySchema_oneOf_0_additionalProperties_items_items_1,
+};
+
+/* XREAD_ReplySchema_oneOf_0_additionalProperties_items reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_additionalProperties_items_elements[] = {
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_INTEGER,"minItems",.value.integer=2},
+{JSON_TYPE_INTEGER,"maxItems",.value.integer=2},
+{JSON_TYPE_ARRAY,"items",.value.array={.objects=XREAD_ReplySchema_oneOf_0_additionalProperties_items_items,.length=2}},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0_additionalProperties_items = {XREAD_ReplySchema_oneOf_0_additionalProperties_items_elements,.length=4};
+
+/* XREAD_ReplySchema_oneOf_0_additionalProperties reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_additionalProperties_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The entries reported for that key"},
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_OBJECT,"items",.value.object=&XREAD_ReplySchema_oneOf_0_additionalProperties_items},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0_additionalProperties = {XREAD_ReplySchema_oneOf_0_additionalProperties_elements,.length=3};
+
+/* XREAD_ReplySchema_oneOf_0 reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_0_elements[] = {
+{JSON_TYPE_STRING,"destiprion",.value.string="A map of key-value elements when each element composed of key name and the entries reported for that key"},
+{JSON_TYPE_STRING,"type",.value.string="object"},
+{JSON_TYPE_OBJECT,"additionalProperties",.value.object=&XREAD_ReplySchema_oneOf_0_additionalProperties},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_0 = {XREAD_ReplySchema_oneOf_0_elements,.length=3};
+
+/* XREAD_ReplySchema_oneOf_1 reply schema */
+struct jsonObjectElement XREAD_ReplySchema_oneOf_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="If BLOCK option is given, and a timeout occurs, or there is no stream we can serve"},
+{JSON_TYPE_STRING,"type",.value.string="null"},
+};
+
+struct jsonObject XREAD_ReplySchema_oneOf_1 = {XREAD_ReplySchema_oneOf_1_elements,.length=2};
+
+/* XREAD_ReplySchema_oneOf array reply schema */
+struct jsonObject *XREAD_ReplySchema_oneOf[] = {
+&XREAD_ReplySchema_oneOf_0,
+&XREAD_ReplySchema_oneOf_1,
+};
+
+/* XREAD_ReplySchema reply schema */
+struct jsonObjectElement XREAD_ReplySchema_elements[] = {
+{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XREAD_ReplySchema_oneOf,.length=2}},
+};
+
+struct jsonObject XREAD_ReplySchema = {XREAD_ReplySchema_elements,.length=1};
+
 /********** XREADGROUP ********************/
 
 /* XREADGROUP history */
@@ -10172,106 +9848,6 @@ struct redisCommandArg XREADGROUP_Args[] = {
 {0}
 };
 
-/* XREADGROUP_ReplySchema_oneOf_0 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="If BLOCK option is specified and the timeout expired"},
-{JSON_TYPE_STRING,"type",.value.string="null"},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_0 = {XREADGROUP_ReplySchema_oneOf_0_elements,.length=2};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_0 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Stream id"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_0 = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_0_elements,.length=3};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_items reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_items = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_items_elements,.length=1};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="Array of field-value pairs"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_items},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0 = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0_elements,.length=3};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_1 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_1_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="null"},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_1 = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_1_elements,.length=1};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf array reply schema */
-struct jsonObject *XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf[] = {
-&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_0,
-&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf_1,
-};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_elements[] = {
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_oneOf,.length=2}},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1 = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1_elements,.length=1};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items array reply schema */
-struct jsonObject *XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items[] = {
-&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_0,
-&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items_1,
-};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_INTEGER,"minItems",.value.integer=2},
-{JSON_TYPE_INTEGER,"maxItems",.value.integer=2},
-{JSON_TYPE_ARRAY,"items",.value.array={.objects=XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_items,.length=2}},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items_elements,.length=4};
-
-/* XREADGROUP_ReplySchema_oneOf_1_additionalProperties reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_additionalProperties_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The entries reported for that key"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&XREADGROUP_ReplySchema_oneOf_1_additionalProperties_items},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1_additionalProperties = {XREADGROUP_ReplySchema_oneOf_1_additionalProperties_elements,.length=3};
-
-/* XREADGROUP_ReplySchema_oneOf_1 reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_oneOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="A map of key-value elements when each element composed of key name and the entries reported for that key"},
-{JSON_TYPE_STRING,"type",.value.string="object"},
-{JSON_TYPE_OBJECT,"additionalProperties",.value.object=&XREADGROUP_ReplySchema_oneOf_1_additionalProperties},
-};
-
-struct jsonObject XREADGROUP_ReplySchema_oneOf_1 = {XREADGROUP_ReplySchema_oneOf_1_elements,.length=3};
-
-/* XREADGROUP_ReplySchema_oneOf array reply schema */
-struct jsonObject *XREADGROUP_ReplySchema_oneOf[] = {
-&XREADGROUP_ReplySchema_oneOf_0,
-&XREADGROUP_ReplySchema_oneOf_1,
-};
-
-/* XREADGROUP_ReplySchema reply schema */
-struct jsonObjectElement XREADGROUP_ReplySchema_elements[] = {
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=XREADGROUP_ReplySchema_oneOf,.length=2}},
-};
-
-struct jsonObject XREADGROUP_ReplySchema = {XREADGROUP_ReplySchema_elements,.length=1};
-
 /********** XREVRANGE ********************/
 
 /* XREVRANGE history */
@@ -10292,6 +9868,56 @@ struct redisCommandArg XREVRANGE_Args[] = {
 {0}
 };
 
+/* XREVRANGE_ReplySchema_items_items_0 reply schema */
+struct jsonObjectElement XREVRANGE_ReplySchema_items_items_0_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="Stream id"},
+{JSON_TYPE_STRING,"type",.value.string="string"},
+{JSON_TYPE_STRING,"pattern",.value.string="[0-9]+-[0-9]+"},
+};
+
+struct jsonObject XREVRANGE_ReplySchema_items_items_0 = {XREVRANGE_ReplySchema_items_items_0_elements,.length=3};
+
+/* XREVRANGE_ReplySchema_items_items_1_items reply schema */
+struct jsonObjectElement XREVRANGE_ReplySchema_items_items_1_items_elements[] = {
+{JSON_TYPE_STRING,"type",.value.string="string"},
+};
+
+struct jsonObject XREVRANGE_ReplySchema_items_items_1_items = {XREVRANGE_ReplySchema_items_items_1_items_elements,.length=1};
+
+/* XREVRANGE_ReplySchema_items_items_1 reply schema */
+struct jsonObjectElement XREVRANGE_ReplySchema_items_items_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="Array of field-value pairs"},
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_OBJECT,"items",.value.object=&XREVRANGE_ReplySchema_items_items_1_items},
+};
+
+struct jsonObject XREVRANGE_ReplySchema_items_items_1 = {XREVRANGE_ReplySchema_items_items_1_elements,.length=3};
+
+/* XREVRANGE_ReplySchema_items_items array reply schema */
+struct jsonObject *XREVRANGE_ReplySchema_items_items[] = {
+&XREVRANGE_ReplySchema_items_items_0,
+&XREVRANGE_ReplySchema_items_items_1,
+};
+
+/* XREVRANGE_ReplySchema_items reply schema */
+struct jsonObjectElement XREVRANGE_ReplySchema_items_elements[] = {
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_INTEGER,"minItems",.value.integer=2},
+{JSON_TYPE_INTEGER,"maxItems",.value.integer=2},
+{JSON_TYPE_ARRAY,"items",.value.array={.objects=XREVRANGE_ReplySchema_items_items,.length=2}},
+};
+
+struct jsonObject XREVRANGE_ReplySchema_items = {XREVRANGE_ReplySchema_items_elements,.length=4};
+
+/* XREVRANGE_ReplySchema reply schema */
+struct jsonObjectElement XREVRANGE_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="An array of the entries with IDs matching the specified range"},
+{JSON_TYPE_STRING,"type",.value.string="array"},
+{JSON_TYPE_OBJECT,"items",.value.object=&XREVRANGE_ReplySchema_items},
+};
+
+struct jsonObject XREVRANGE_ReplySchema = {XREVRANGE_ReplySchema_elements,.length=3};
+
 /********** XSETID ********************/
 
 /* XSETID history */
@@ -10307,10 +9933,17 @@ commandHistory XSETID_History[] = {
 struct redisCommandArg XSETID_Args[] = {
 {"key",ARG_TYPE_KEY,0,NULL,NULL,NULL,CMD_ARG_NONE},
 {"last-id",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE},
-{"entries-added",ARG_TYPE_INTEGER,-1,"ENTRIESADDED",NULL,NULL,CMD_ARG_OPTIONAL},
-{"max-deleted-id",ARG_TYPE_STRING,-1,"MAXDELETEDID",NULL,NULL,CMD_ARG_OPTIONAL},
+{"entries-added",ARG_TYPE_INTEGER,-1,"ENTRIESADDED",NULL,"7.0.0",CMD_ARG_OPTIONAL},
+{"max-deleted-id",ARG_TYPE_STRING,-1,"MAXDELETEDID",NULL,"7.0.0",CMD_ARG_OPTIONAL},
 {0}
 };
+
+/* XSETID_ReplySchema reply schema */
+struct jsonObjectElement XSETID_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"const",.value.string="OK"},
+};
+
+struct jsonObject XSETID_ReplySchema = {XSETID_ReplySchema_elements,.length=1};
 
 /********** XTRIM ********************/
 
@@ -10355,6 +9988,15 @@ struct redisCommandArg XTRIM_Args[] = {
 {"trim",ARG_TYPE_BLOCK,-1,NULL,NULL,NULL,CMD_ARG_NONE,.subargs=XTRIM_trim_Subargs},
 {0}
 };
+
+/* XTRIM_ReplySchema reply schema */
+struct jsonObjectElement XTRIM_ReplySchema_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="The number of entries deleted from the stream."},
+{JSON_TYPE_STRING,"type",.value.string="integer"},
+{JSON_TYPE_INTEGER,"minimum",.value.integer=0},
+};
+
+struct jsonObject XTRIM_ReplySchema = {XTRIM_ReplySchema_elements,.length=3};
 
 /********** APPEND ********************/
 
@@ -10505,14 +10147,6 @@ struct redisCommandArg INCR_Args[] = {
 {"key",ARG_TYPE_KEY,0,NULL,NULL,NULL,CMD_ARG_NONE},
 {0}
 };
-
-/* INCR_ReplySchema reply schema */
-struct jsonObjectElement INCR_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="The value of key after the increment"},
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-};
-
-struct jsonObject INCR_ReplySchema = {INCR_ReplySchema_elements,.length=2};
 
 /********** INCRBY ********************/
 
@@ -10927,11 +10561,11 @@ struct redisCommand redisCommandTable[] = {
 {"pexpireat","Set the expiration for a key as a UNIX timestamp specified in milliseconds","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,PEXPIREAT_History,PEXPIREAT_tips,pexpireatCommand,-3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PEXPIREAT_Args},
 {"pexpiretime","Get the expiration Unix timestamp for a key in milliseconds","O(1)","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,PEXPIRETIME_History,PEXPIRETIME_tips,pexpiretimeCommand,2,CMD_READONLY|CMD_FAST,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PEXPIRETIME_Args},
 {"pttl","Get the time to live for a key in milliseconds","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,PTTL_History,PTTL_tips,pttlCommand,2,CMD_READONLY|CMD_FAST,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PTTL_Args},
-{"randomkey","Return a random key from the keyspace","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RANDOMKEY_History,RANDOMKEY_tips,randomkeyCommand,1,CMD_READONLY,ACL_CATEGORY_KEYSPACE,.reply_schema=&RANDOMKEY_ReplySchema},
-{"rename","Rename a key","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RENAME_History,RENAME_tips,renameCommand,3,CMD_WRITE,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=RENAME_Args,.reply_schema=&RENAME_ReplySchema},
+{"randomkey","Return a random key from the keyspace","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RANDOMKEY_History,RANDOMKEY_tips,randomkeyCommand,1,CMD_READONLY|CMD_TOUCHES_ARBITRARY_KEYS,ACL_CATEGORY_KEYSPACE,.reply_schema=&RANDOMKEY_ReplySchema},
+{"rename","Rename a key","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RENAME_History,RENAME_tips,renameCommand,3,CMD_WRITE,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=RENAME_Args},
 {"renamenx","Rename a key, only if the new key does not exist","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RENAMENX_History,RENAMENX_tips,renamenxCommand,3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_OW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=RENAMENX_Args,.reply_schema=&RENAMENX_ReplySchema},
 {"restore","Create a key using the provided serialized value, previously obtained using DUMP.","O(1) to create the new key and additional O(N*M) to reconstruct the serialized value, where N is the number of Redis objects composing the value and M their average size. For small string values the time complexity is thus O(1)+O(1*M) where M is small, so simply O(1). However for sorted set values the complexity is O(N*M*log(N)) because inserting values into sorted sets is O(log(N)).","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,RESTORE_History,RESTORE_tips,restoreCommand,-4,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_KEYSPACE|ACL_CATEGORY_DANGEROUS,{{NULL,CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=RESTORE_Args},
-{"scan","Incrementally iterate the keys space","O(1) for every call. O(N) for a complete iteration, including enough command calls for the cursor to return back to 0. N is the number of elements inside the collection.","2.8.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,SCAN_History,SCAN_tips,scanCommand,-2,CMD_READONLY,ACL_CATEGORY_KEYSPACE,.args=SCAN_Args},
+{"scan","Incrementally iterate the keys space","O(1) for every call. O(N) for a complete iteration, including enough command calls for the cursor to return back to 0. N is the number of elements inside the collection.","2.8.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,SCAN_History,SCAN_tips,scanCommand,-2,CMD_READONLY|CMD_TOUCHES_ARBITRARY_KEYS,ACL_CATEGORY_KEYSPACE,.args=SCAN_Args},
 {"sort","Sort the elements in a list, set or sorted set","O(N+M*log(M)) where N is the number of elements in the list or set to sort, and M the number of returned elements. When the elements are not sorted, complexity is O(N).","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,SORT_History,SORT_tips,sortCommand,-2,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_SET|ACL_CATEGORY_SORTEDSET|ACL_CATEGORY_LIST|ACL_CATEGORY_DANGEROUS,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{"For the optional BY/GET keyword. It is marked 'unknown' because the key names derive from the content of the key we sort",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_UNKNOWN,{{0}},KSPEC_FK_UNKNOWN,{{0}}},{"For the optional STORE keyword. It is marked 'unknown' because the keyword can appear anywhere in the argument array",CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_UNKNOWN,{{0}},KSPEC_FK_UNKNOWN,{{0}}}},sortGetKeys,.args=SORT_Args},
 {"sort_ro","Sort the elements in a list, set or sorted set. Read-only variant of SORT.","O(N+M*log(M)) where N is the number of elements in the list or set to sort, and M the number of returned elements. When the elements are not sorted, complexity is O(N).","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,SORT_RO_History,SORT_RO_tips,sortroCommand,-2,CMD_READONLY,ACL_CATEGORY_SET|ACL_CATEGORY_SORTEDSET|ACL_CATEGORY_LIST|ACL_CATEGORY_DANGEROUS,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{"For the optional BY/GET keyword. It is marked 'unknown' because the key names derive from the content of the key we sort",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_UNKNOWN,{{0}},KSPEC_FK_UNKNOWN,{{0}}}},sortROGetKeys,.args=SORT_RO_Args},
 {"touch","Alters the last access time of a key(s). Returns the number of existing keys specified.","O(N) where N is the number of keys that will be touched.","3.2.1",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_GENERIC,TOUCH_History,TOUCH_tips,touchCommand,-2,CMD_READONLY|CMD_FAST,ACL_CATEGORY_KEYSPACE,{{NULL,CMD_KEY_RO,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-1,1,0}}},.args=TOUCH_Args},
@@ -10977,7 +10611,7 @@ struct redisCommand redisCommandTable[] = {
 {"blmove","Pop an element from a list, push it to another list and return it; or block until one is available","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,BLMOVE_History,BLMOVE_tips,blmoveCommand,6,CMD_WRITE|CMD_DENYOOM|CMD_NOSCRIPT|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=BLMOVE_Args,.reply_schema=&BLMOVE_ReplySchema},
 {"blmpop","Pop elements from a list, or block until one is available","O(N+M) where N is the number of provided keys and M is the number of elements returned.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,BLMPOP_History,BLMPOP_tips,blmpopCommand,-5,CMD_WRITE|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},blmpopGetKeys,.args=BLMPOP_Args,.reply_schema=&BLMPOP_ReplySchema},
 {"blpop","Remove and get the first element in a list, or block until one is available","O(N) where N is the number of provided keys.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,BLPOP_History,BLPOP_tips,blpopCommand,-3,CMD_WRITE|CMD_NOSCRIPT|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-2,1,0}}},.args=BLPOP_Args},
-{"brpop","Remove and get the last element in a list, or block until one is available","O(N) where N is the number of provided keys.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,BRPOP_History,BRPOP_tips,brpopCommand,-3,CMD_WRITE|CMD_NOSCRIPT|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-2,1,0}}},.args=BRPOP_Args,.reply_schema=&BRPOP_ReplySchema},
+{"brpop","Remove and get the last element in a list, or block until one is available","O(N) where N is the number of provided keys.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,BRPOP_History,BRPOP_tips,brpopCommand,-3,CMD_WRITE|CMD_NOSCRIPT|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-2,1,0}}},.args=BRPOP_Args},
 {"brpoplpush","Pop an element from a list, push it to another list and return it; or block until one is available","O(1)","2.2.0",CMD_DOC_DEPRECATED,"`BLMOVE` with the `RIGHT` and `LEFT` arguments","6.2.0",COMMAND_GROUP_LIST,BRPOPLPUSH_History,BRPOPLPUSH_tips,brpoplpushCommand,4,CMD_WRITE|CMD_DENYOOM|CMD_NOSCRIPT|CMD_BLOCKING,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=BRPOPLPUSH_Args},
 {"lindex","Get an element from a list by its index","O(N) where N is the number of elements to traverse to get to the element at index. This makes asking for the first or the last element of the list O(1).","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LINDEX_History,LINDEX_tips,lindexCommand,3,CMD_READONLY,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LINDEX_Args},
 {"linsert","Insert an element before or after another element in a list","O(N) where N is the number of elements to traverse before seeing the value pivot. This means that inserting somewhere on the left end on the list (head) can be considered O(1) and inserting somewhere on the right end (tail) is O(N).","2.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LINSERT_History,LINSERT_tips,linsertCommand,5,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LINSERT_Args},
@@ -10988,7 +10622,7 @@ struct redisCommand redisCommandTable[] = {
 {"lpos","Return the index of matching elements on a list","O(N) where N is the number of elements in the list, for the average case. When searching for elements near the head or the tail of the list, or when the MAXLEN option is provided, the command may run in constant time.","6.0.6",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LPOS_History,LPOS_tips,lposCommand,-3,CMD_READONLY,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LPOS_Args},
 {"lpush","Prepend one or multiple elements to a list","O(1) for each element added, so O(N) to add N elements when the command is called with multiple arguments.","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LPUSH_History,LPUSH_tips,lpushCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LPUSH_Args},
 {"lpushx","Prepend an element to a list, only if the list exists","O(1) for each element added, so O(N) to add N elements when the command is called with multiple arguments.","2.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LPUSHX_History,LPUSHX_tips,lpushxCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LPUSHX_Args},
-{"lrange","Get a range of elements from a list","O(S+N) where S is the distance of start offset from HEAD for small lists, from nearest end (HEAD or TAIL) for large lists; and N is the number of elements in the specified range.","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LRANGE_History,LRANGE_tips,lrangeCommand,4,CMD_READONLY,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LRANGE_Args,.reply_schema=&LRANGE_ReplySchema},
+{"lrange","Get a range of elements from a list","O(S+N) where S is the distance of start offset from HEAD for small lists, from nearest end (HEAD or TAIL) for large lists; and N is the number of elements in the specified range.","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LRANGE_History,LRANGE_tips,lrangeCommand,4,CMD_READONLY,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LRANGE_Args},
 {"lrem","Remove elements from a list","O(N+M) where N is the length of the list and M is the number of elements removed.","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LREM_History,LREM_tips,lremCommand,4,CMD_WRITE,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LREM_Args},
 {"lset","Set the value of an element in a list by its index","O(N) where N is the length of the list. Setting either the first or the last element of the list is O(1).","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LSET_History,LSET_tips,lsetCommand,4,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LSET_Args},
 {"ltrim","Trim a list to the specified range","O(N) where N is the number of elements to be removed by the operation.","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_LIST,LTRIM_History,LTRIM_tips,ltrimCommand,4,CMD_WRITE,ACL_CATEGORY_LIST,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=LTRIM_Args},
@@ -11007,19 +10641,19 @@ struct redisCommand redisCommandTable[] = {
 {"sunsubscribe","Stop listening for messages posted to the given shard channels","O(N) where N is the number of clients already subscribed to a shard channel.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_PUBSUB,SUNSUBSCRIBE_History,SUNSUBSCRIBE_tips,sunsubscribeCommand,-1,CMD_PUBSUB|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0,{{NULL,CMD_KEY_NOT_KEY,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-1,1,0}}},.args=SUNSUBSCRIBE_Args},
 {"unsubscribe","Stop listening for messages posted to the given channels","O(N) where N is the number of clients already subscribed to a channel.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_PUBSUB,UNSUBSCRIBE_History,UNSUBSCRIBE_tips,unsubscribeCommand,-1,CMD_PUBSUB|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE|CMD_SENTINEL,0,.args=UNSUBSCRIBE_Args},
 /* scripting */
-{"eval","Execute a Lua script server side","Depends on the script that is executed.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVAL_History,EVAL_tips,evalCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RW and UPDATE",CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVAL_Args,.reply_schema=&EVAL_ReplySchema},
-{"evalsha","Execute a Lua script server side","Depends on the script that is executed.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVALSHA_History,EVALSHA_tips,evalShaCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVALSHA_Args,.reply_schema=&EVALSHA_ReplySchema},
-{"evalsha_ro","Execute a read-only Lua script server side","Depends on the script that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVALSHA_RO_History,EVALSHA_RO_tips,evalShaRoCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVALSHA_RO_Args,.reply_schema=&EVALSHA_RO_ReplySchema},
-{"eval_ro","Execute a read-only Lua script server side","Depends on the script that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVAL_RO_History,EVAL_RO_tips,evalRoCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RO and ACCESS",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVAL_RO_Args,.reply_schema=&EVAL_RO_ReplySchema},
-{"fcall","Invoke a function","Depends on the function that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FCALL_History,FCALL_tips,fcallCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RW and UPDATE",CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},functionGetKeys,.args=FCALL_Args,.reply_schema=&FCALL_ReplySchema},
-{"fcall_ro","Invoke a read-only function","Depends on the function that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FCALL_RO_History,FCALL_RO_tips,fcallroCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RO and ACCESS",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},functionGetKeys,.args=FCALL_RO_Args,.reply_schema=&FCALL_RO_ReplySchema},
+{"eval","Execute a Lua script server side","Depends on the script that is executed.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVAL_History,EVAL_tips,evalCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RW and UPDATE",CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVAL_Args},
+{"evalsha","Execute a Lua script server side","Depends on the script that is executed.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVALSHA_History,EVALSHA_tips,evalShaCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVALSHA_Args},
+{"evalsha_ro","Execute a read-only Lua script server side","Depends on the script that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVALSHA_RO_History,EVALSHA_RO_tips,evalShaRoCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVALSHA_RO_Args},
+{"eval_ro","Execute a read-only Lua script server side","Depends on the script that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,EVAL_RO_History,EVAL_RO_tips,evalRoCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RO and ACCESS",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},evalGetKeys,.args=EVAL_RO_Args},
+{"fcall","Invoke a function","Depends on the function that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FCALL_History,FCALL_tips,fcallCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_MAY_REPLICATE|CMD_NO_MANDATORY_KEYS|CMD_STALE,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RW and UPDATE",CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},functionGetKeys,.args=FCALL_Args},
+{"fcall_ro","Invoke a read-only function","Depends on the function that is executed.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FCALL_RO_History,FCALL_RO_tips,fcallroCommand,-3,CMD_NOSCRIPT|CMD_SKIP_MONITOR|CMD_NO_MANDATORY_KEYS|CMD_STALE|CMD_READONLY,ACL_CATEGORY_SCRIPTING,{{"We cannot tell how the keys will be used so we assume the worst, RO and ACCESS",CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},functionGetKeys,.args=FCALL_RO_Args},
 {"function","A container for function commands","Depends on subcommand.","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,FUNCTION_History,FUNCTION_tips,NULL,-2,0,0,.subcommands=FUNCTION_Subcommands},
 {"script","A container for Lua scripts management commands","Depends on subcommand.","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SCRIPTING,SCRIPT_History,SCRIPT_tips,NULL,-2,0,0,.subcommands=SCRIPT_Subcommands},
 /* sentinel */
 {"sentinel","A container for Sentinel commands","Depends on subcommand.","2.8.4",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SENTINEL,SENTINEL_History,SENTINEL_tips,NULL,-2,CMD_ADMIN|CMD_SENTINEL|CMD_ONLY_SENTINEL,0,.subcommands=SENTINEL_Subcommands},
 /* server */
 {"acl","A container for Access List Control commands ","Depends on subcommand.","6.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,ACL_History,ACL_tips,NULL,-2,CMD_SENTINEL,0,.subcommands=ACL_Subcommands},
-{"bgrewriteaof","Asynchronously rewrite the append-only file","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,BGREWRITEAOF_History,BGREWRITEAOF_tips,bgrewriteaofCommand,1,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT,0},
+{"bgrewriteaof","Asynchronously rewrite the append-only file","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,BGREWRITEAOF_History,BGREWRITEAOF_tips,bgrewriteaofCommand,1,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT,0,.reply_schema=&BGREWRITEAOF_ReplySchema},
 {"bgsave","Asynchronously save the dataset to disk","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,BGSAVE_History,BGSAVE_tips,bgsaveCommand,-1,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT,0,.args=BGSAVE_Args},
 {"command","Get array of Redis command details","O(N) where N is the total number of Redis commands","2.8.13",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,COMMAND_History,COMMAND_tips,commandCommand,-1,CMD_LOADING|CMD_STALE|CMD_SENTINEL,ACL_CATEGORY_CONNECTION,.subcommands=COMMAND_Subcommands},
 {"config","A container for server configuration commands","Depends on subcommand.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,CONFIG_History,CONFIG_tips,NULL,-2,0,0,.subcommands=CONFIG_Subcommands},
@@ -11036,15 +10670,15 @@ struct redisCommand redisCommandTable[] = {
 {"module","A container for module commands","Depends on subcommand.","4.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,MODULE_History,MODULE_tips,NULL,-2,0,0,.subcommands=MODULE_Subcommands},
 {"monitor","Listen for all requests received by the server in real time",NULL,"1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,MONITOR_History,MONITOR_tips,monitorCommand,1,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE,0},
 {"psync","Internal command used for replication",NULL,"2.8.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,PSYNC_History,PSYNC_tips,syncCommand,-3,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NO_MULTI|CMD_NOSCRIPT,0,.args=PSYNC_Args},
-{"replconf","An internal command for configuring the replication stream","O(1)","3.0.0",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_SERVER,REPLCONF_History,REPLCONF_tips,replconfCommand,-1,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE|CMD_ALLOW_BUSY,0,.reply_schema=&REPLCONF_ReplySchema},
-{"replicaof","Make the server a replica of another instance, or promote it as master.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,REPLICAOF_History,REPLICAOF_tips,replicaofCommand,3,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT|CMD_STALE,0,.args=REPLICAOF_Args,.reply_schema=&REPLICAOF_ReplySchema},
+{"replconf","An internal command for configuring the replication stream","O(1)","3.0.0",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_SERVER,REPLCONF_History,REPLCONF_tips,replconfCommand,-1,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE|CMD_ALLOW_BUSY,0},
+{"replicaof","Make the server a replica of another instance, or promote it as master.","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,REPLICAOF_History,REPLICAOF_tips,replicaofCommand,3,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT|CMD_STALE,0,.args=REPLICAOF_Args},
 {"restore-asking","An internal command for migrating keys in a cluster","O(1) to create the new key and additional O(N*M) to reconstruct the serialized value, where N is the number of Redis objects composing the value and M their average size. For small string values the time complexity is thus O(1)+O(1*M) where M is small, so simply O(1). However for sorted set values the complexity is O(N*M*log(N)) because inserting values into sorted sets is O(log(N)).","3.0.0",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_SERVER,RESTORE_ASKING_History,RESTORE_ASKING_tips,restoreCommand,-4,CMD_WRITE|CMD_DENYOOM|CMD_ASKING,ACL_CATEGORY_KEYSPACE|ACL_CATEGORY_DANGEROUS,{{NULL,CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=RESTORE_ASKING_Args},
 {"role","Return the role of the instance in the context of replication","O(1)","2.8.12",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,ROLE_History,ROLE_tips,roleCommand,1,CMD_NOSCRIPT|CMD_LOADING|CMD_STALE|CMD_FAST|CMD_SENTINEL,ACL_CATEGORY_ADMIN|ACL_CATEGORY_DANGEROUS},
 {"save","Synchronously save the dataset to disk","O(N) where N is the total number of keys in all databases","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SAVE_History,SAVE_tips,saveCommand,1,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT|CMD_NO_MULTI,0},
 {"shutdown","Synchronously save the dataset to disk and then shut down the server","O(N) when saving, where N is the total number of keys in all databases when saving data, otherwise O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SHUTDOWN_History,SHUTDOWN_tips,shutdownCommand,-1,CMD_ADMIN|CMD_NOSCRIPT|CMD_LOADING|CMD_STALE|CMD_NO_MULTI|CMD_SENTINEL|CMD_ALLOW_BUSY,0,.args=SHUTDOWN_Args},
-{"slaveof","Make the server a replica of another instance, or promote it as master.","O(1)","1.0.0",CMD_DOC_DEPRECATED,"`REPLICAOF`","5.0.0",COMMAND_GROUP_SERVER,SLAVEOF_History,SLAVEOF_tips,replicaofCommand,3,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT|CMD_STALE,0,.args=SLAVEOF_Args,.reply_schema=&SLAVEOF_ReplySchema},
+{"slaveof","Make the server a replica of another instance, or promote it as master.","O(1)","1.0.0",CMD_DOC_DEPRECATED,"`REPLICAOF`","5.0.0",COMMAND_GROUP_SERVER,SLAVEOF_History,SLAVEOF_tips,replicaofCommand,3,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NOSCRIPT|CMD_STALE,0,.args=SLAVEOF_Args},
 {"slowlog","A container for slow log commands","Depends on subcommand.","2.2.12",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SLOWLOG_History,SLOWLOG_tips,NULL,-2,0,0,.subcommands=SLOWLOG_Subcommands},
-{"swapdb","Swaps two Redis databases","O(N) where N is the count of clients watching or blocking on keys from both databases.","4.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SWAPDB_History,SWAPDB_tips,swapdbCommand,3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_KEYSPACE|ACL_CATEGORY_DANGEROUS,.args=SWAPDB_Args,.reply_schema=&SWAPDB_ReplySchema},
+{"swapdb","Swaps two Redis databases","O(N) where N is the count of clients watching or blocking on keys from both databases.","4.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SWAPDB_History,SWAPDB_tips,swapdbCommand,3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_KEYSPACE|ACL_CATEGORY_DANGEROUS,.args=SWAPDB_Args},
 {"sync","Internal command used for replication",NULL,"1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,SYNC_History,SYNC_tips,syncCommand,1,CMD_NO_ASYNC_LOADING|CMD_ADMIN|CMD_NO_MULTI|CMD_NOSCRIPT,0},
 {"time","Return the current server time","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SERVER,TIME_History,TIME_tips,timeCommand,1,CMD_LOADING|CMD_STALE|CMD_FAST,0},
 /* set */
@@ -11102,21 +10736,21 @@ struct redisCommand redisCommandTable[] = {
 {"zunion","Add multiple sorted sets","O(N)+O(M*log(M)) with N being the sum of the sizes of the input sorted sets, and M being the number of elements in the resulting sorted set.","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SORTED_SET,ZUNION_History,ZUNION_tips,zunionCommand,-3,CMD_READONLY,ACL_CATEGORY_SORTEDSET,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},zunionInterDiffGetKeys,.args=ZUNION_Args},
 {"zunionstore","Add multiple sorted sets and store the resulting sorted set in a new key","O(N)+O(M log(M)) with N being the sum of the sizes of the input sorted sets, and M being the number of elements in the resulting sorted set.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_SORTED_SET,ZUNIONSTORE_History,ZUNIONSTORE_tips,zunionstoreCommand,-4,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_SORTEDSET,{{NULL,CMD_KEY_OW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_KEYNUM,.fk.keynum={0,1,1}}},zunionInterDiffStoreGetKeys,.args=ZUNIONSTORE_Args},
 /* stream */
-{"xack","Marks a pending message as correctly processed, effectively removing it from the pending entries list of the consumer group. Return value of the command is the number of messages successfully acknowledged, that is, the IDs we were actually able to resolve in the PEL.","O(1) for each message ID processed.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XACK_History,XACK_tips,xackCommand,-4,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XACK_Args,.reply_schema=&XACK_ReplySchema},
-{"xadd","Appends a new entry to a stream","O(1) when adding a new entry, O(N) when trimming where N being the number of entries evicted.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XADD_History,XADD_tips,xaddCommand,-5,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STREAM,{{"UPDATE instead of INSERT because of the optional trimming feature",CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XADD_Args},
+{"xack","Marks a pending message as correctly processed, effectively removing it from the pending entries list of the consumer group. Return value of the command is the number of messages successfully acknowledged, that is, the IDs we were actually able to resolve in the PEL.","O(1) for each message ID processed.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XACK_History,XACK_tips,xackCommand,-4,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XACK_Args},
+{"xadd","Appends a new entry to a stream","O(1) when adding a new entry, O(N) when trimming where N being the number of entries evicted.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XADD_History,XADD_tips,xaddCommand,-5,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STREAM,{{"UPDATE instead of INSERT because of the optional trimming feature",CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XADD_Args,.reply_schema=&XADD_ReplySchema},
 {"xautoclaim","Changes (or acquires) ownership of messages in a consumer group, as if the messages were delivered to the specified consumer.","O(1) if COUNT is small.","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XAUTOCLAIM_History,XAUTOCLAIM_tips,xautoclaimCommand,-6,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XAUTOCLAIM_Args,.reply_schema=&XAUTOCLAIM_ReplySchema},
-{"xclaim","Changes (or acquires) ownership of a message in a consumer group, as if the message was delivered to the specified consumer.","O(log N) with N being the number of messages in the PEL of the consumer group.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XCLAIM_History,XCLAIM_tips,xclaimCommand,-6,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XCLAIM_Args,.reply_schema=&XCLAIM_ReplySchema},
-{"xdel","Removes the specified entries from the stream. Returns the number of items actually deleted, that may be different from the number of IDs passed in case certain IDs do not exist.","O(1) for each single item to delete in the stream, regardless of the stream size.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XDEL_History,XDEL_tips,xdelCommand,-3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XDEL_Args},
+{"xclaim","Changes (or acquires) ownership of a message in a consumer group, as if the message was delivered to the specified consumer.","O(log N) with N being the number of messages in the PEL of the consumer group.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XCLAIM_History,XCLAIM_tips,xclaimCommand,-6,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XCLAIM_Args},
+{"xdel","Removes the specified entries from the stream. Returns the number of items actually deleted, that may be different from the number of IDs passed in case certain IDs do not exist.","O(1) for each single item to delete in the stream, regardless of the stream size.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XDEL_History,XDEL_tips,xdelCommand,-3,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XDEL_Args,.reply_schema=&XDEL_ReplySchema},
 {"xgroup","A container for consumer groups commands","Depends on subcommand.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XGROUP_History,XGROUP_tips,NULL,-2,0,0,.subcommands=XGROUP_Subcommands},
 {"xinfo","A container for stream introspection commands","Depends on subcommand.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XINFO_History,XINFO_tips,NULL,-2,0,0,.subcommands=XINFO_Subcommands},
-{"xlen","Return the number of entries in a stream","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XLEN_History,XLEN_tips,xlenCommand,2,CMD_READONLY|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XLEN_Args},
+{"xlen","Return the number of entries in a stream","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XLEN_History,XLEN_tips,xlenCommand,2,CMD_READONLY|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XLEN_Args,.reply_schema=&XLEN_ReplySchema},
 {"xpending","Return information and entries from a stream consumer group pending entries list, that are messages fetched but never acknowledged.","O(N) with N being the number of elements returned, so asking for a small fixed number of entries per call is O(1). O(M), where M is the total number of entries scanned when used with the IDLE filter. When the command returns just the summary and the list of consumers is small, it runs in O(1) time; otherwise, an additional O(N) time for iterating every consumer.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XPENDING_History,XPENDING_tips,xpendingCommand,-3,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XPENDING_Args,.reply_schema=&XPENDING_ReplySchema},
 {"xrange","Return a range of elements in a stream, with IDs matching the specified IDs interval","O(N) with N being the number of elements being returned. If N is constant (e.g. always asking for the first 10 elements with COUNT), you can consider it O(1).","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XRANGE_History,XRANGE_tips,xrangeCommand,-4,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XRANGE_Args,.reply_schema=&XRANGE_ReplySchema},
-{"xread","Return never seen elements in multiple streams, with IDs greater than the ones reported by the caller for each stream. Can block.","For each stream mentioned: O(N) with N being the number of elements being returned, it means that XREAD-ing with a fixed COUNT is O(1). Note that when the BLOCK option is used, XADD will pay O(M) time in order to serve the M clients blocked on the stream getting new data.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREAD_History,XREAD_tips,xreadCommand,-4,CMD_BLOCKING|CMD_READONLY|CMD_BLOCKING,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_KEYWORD,.bs.keyword={"STREAMS",1},KSPEC_FK_RANGE,.fk.range={-1,1,2}}},xreadGetKeys,.args=XREAD_Args},
-{"xreadgroup","Return new entries from a stream using a consumer group, or access the history of the pending entries for a given consumer. Can block.","For each stream mentioned: O(M) with M being the number of elements returned. If M is constant (e.g. always asking for the first 10 elements with COUNT), you can consider it O(1). On the other side when XREADGROUP blocks, XADD will pay the O(N) time in order to serve the N clients blocked on the stream getting new data.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREADGROUP_History,XREADGROUP_tips,xreadCommand,-7,CMD_BLOCKING|CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_KEYWORD,.bs.keyword={"STREAMS",4},KSPEC_FK_RANGE,.fk.range={-1,1,2}}},xreadGetKeys,.args=XREADGROUP_Args,.reply_schema=&XREADGROUP_ReplySchema},
-{"xrevrange","Return a range of elements in a stream, with IDs matching the specified IDs interval, in reverse order (from greater to smaller IDs) compared to XRANGE","O(N) with N being the number of elements returned. If N is constant (e.g. always asking for the first 10 elements with COUNT), you can consider it O(1).","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREVRANGE_History,XREVRANGE_tips,xrevrangeCommand,-4,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XREVRANGE_Args},
-{"xsetid","An internal command for replicating stream values","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XSETID_History,XSETID_tips,xsetidCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XSETID_Args},
-{"xtrim","Trims the stream to (approximately if '~' is passed) a certain size","O(N), with N being the number of evicted entries. Constant times are very small however, since entries are organized in macro nodes containing multiple entries that can be released with a single deallocation.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XTRIM_History,XTRIM_tips,xtrimCommand,-4,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XTRIM_Args},
+{"xread","Return never seen elements in multiple streams, with IDs greater than the ones reported by the caller for each stream. Can block.","For each stream mentioned: O(N) with N being the number of elements being returned, it means that XREAD-ing with a fixed COUNT is O(1). Note that when the BLOCK option is used, XADD will pay O(M) time in order to serve the M clients blocked on the stream getting new data.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREAD_History,XREAD_tips,xreadCommand,-4,CMD_BLOCKING|CMD_READONLY|CMD_BLOCKING,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_KEYWORD,.bs.keyword={"STREAMS",1},KSPEC_FK_RANGE,.fk.range={-1,1,2}}},xreadGetKeys,.args=XREAD_Args,.reply_schema=&XREAD_ReplySchema},
+{"xreadgroup","Return new entries from a stream using a consumer group, or access the history of the pending entries for a given consumer. Can block.","For each stream mentioned: O(M) with M being the number of elements returned. If M is constant (e.g. always asking for the first 10 elements with COUNT), you can consider it O(1). On the other side when XREADGROUP blocks, XADD will pay the O(N) time in order to serve the N clients blocked on the stream getting new data.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREADGROUP_History,XREADGROUP_tips,xreadCommand,-7,CMD_BLOCKING|CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_KEYWORD,.bs.keyword={"STREAMS",4},KSPEC_FK_RANGE,.fk.range={-1,1,2}}},xreadGetKeys,.args=XREADGROUP_Args},
+{"xrevrange","Return a range of elements in a stream, with IDs matching the specified IDs interval, in reverse order (from greater to smaller IDs) compared to XRANGE","O(N) with N being the number of elements returned. If N is constant (e.g. always asking for the first 10 elements with COUNT), you can consider it O(1).","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XREVRANGE_History,XREVRANGE_tips,xrevrangeCommand,-4,CMD_READONLY,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XREVRANGE_Args,.reply_schema=&XREVRANGE_ReplySchema},
+{"xsetid","An internal command for replicating stream values","O(1)","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XSETID_History,XSETID_tips,xsetidCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XSETID_Args,.reply_schema=&XSETID_ReplySchema},
+{"xtrim","Trims the stream to (approximately if '~' is passed) a certain size","O(N), with N being the number of evicted entries. Constant times are very small however, since entries are organized in macro nodes containing multiple entries that can be released with a single deallocation.","5.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STREAM,XTRIM_History,XTRIM_tips,xtrimCommand,-4,CMD_WRITE,ACL_CATEGORY_STREAM,{{NULL,CMD_KEY_RW|CMD_KEY_DELETE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=XTRIM_Args,.reply_schema=&XTRIM_ReplySchema},
 /* string */
 {"append","Append a value to a key","O(1). The amortized time complexity is O(1) assuming the appended value is small and the already present value is of any size, since the dynamic string library used by Redis will double the free space available on every reallocation.","2.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,APPEND_History,APPEND_tips,appendCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=APPEND_Args,.reply_schema=&APPEND_ReplySchema},
 {"decr","Decrement the integer value of a key by one","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,DECR_History,DECR_tips,decrCommand,2,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=DECR_Args},
@@ -11126,7 +10760,7 @@ struct redisCommand redisCommandTable[] = {
 {"getex","Get the value of a key and optionally set its expiration","O(1)","6.2.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,GETEX_History,GETEX_tips,getexCommand,-2,CMD_WRITE|CMD_FAST,ACL_CATEGORY_STRING,{{"RW and UPDATE because it changes the TTL",CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=GETEX_Args},
 {"getrange","Get a substring of the string stored at a key","O(N) where N is the length of the returned string. The complexity is ultimately determined by the returned length, but because creating a substring from an existing string is very cheap, it can be considered O(1) for small strings.","2.4.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,GETRANGE_History,GETRANGE_tips,getrangeCommand,4,CMD_READONLY,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=GETRANGE_Args},
 {"getset","Set the string value of a key and return its old value","O(1)","1.0.0",CMD_DOC_DEPRECATED,"`SET` with the `!GET` argument","6.2.0",COMMAND_GROUP_STRING,GETSET_History,GETSET_tips,getsetCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=GETSET_Args},
-{"incr","Increment the integer value of a key by one","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,INCR_History,INCR_tips,incrCommand,2,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=INCR_Args,.reply_schema=&INCR_ReplySchema},
+{"incr","Increment the integer value of a key by one","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,INCR_History,INCR_tips,incrCommand,2,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=INCR_Args},
 {"incrby","Increment the integer value of a key by the given amount","O(1)","1.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,INCRBY_History,INCRBY_tips,incrbyCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=INCRBY_Args},
 {"incrbyfloat","Increment the float value of a key by the given amount","O(1)","2.6.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,INCRBYFLOAT_History,INCRBYFLOAT_tips,incrbyfloatCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_UPDATE,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=INCRBYFLOAT_Args},
 {"lcs","Find longest common substring","O(N*M) where N and M are the lengths of s1 and s2, respectively","7.0.0",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_STRING,LCS_History,LCS_tips,lcsCommand,-3,CMD_READONLY,ACL_CATEGORY_STRING,{{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={1,1,0}}},.args=LCS_Args},
