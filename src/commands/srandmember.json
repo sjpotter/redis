@@ -55,7 +55,7 @@
             }
         ],
         "reply_schema": {
-            "anyOf": [
+            "oneOf": [
                 {
                     "description": "In case `count` is not given and key doesn't exist",
                     "type": "null"
