@@ -50,8 +50,7 @@
                                     "type": "number",
                                     "minimum": 0
                                 }
-                            },
-                            "required": ["name", "command", "duration_ms"]
+                            }
                         }
                     ]
                 },
@@ -68,8 +67,7 @@
                                 "type": "integer"
                             }
                         }
-                    },
-                    "required": ["libraries_count", "functions_count"]
+                    }
                 }
             }
         }

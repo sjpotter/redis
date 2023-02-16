@@ -71,16 +71,14 @@
                                         "type": "string"
                                     }
                                 }
-                            },
-                            "required": ["name", "description", "flags"]
+                            }
                         }
                     },
                     "library_code": {
                         "description": "the library's source code (when given the WITHCODE modifier)",
                         "type": "string"
                     }
-                },
-                "required": ["library_name", "engine", "functions"]
+                }
             }
         }
     }
