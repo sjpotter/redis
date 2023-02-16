@@ -2869,7 +2869,7 @@ struct jsonObject PFDEBUG_ReplySchema_anyOf_0_items = {PFDEBUG_ReplySchema_anyOf
 
 /* PFDEBUG_ReplySchema_anyOf_0 reply schema */
 struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug getreg"},
+{JSON_TYPE_STRING,"description",.value.string="pfdebug getreg sub command, HLL registers value"},
 {JSON_TYPE_STRING,"type",.value.string="array"},
 {JSON_TYPE_OBJECT,"items",.value.object=&PFDEBUG_ReplySchema_anyOf_0_items},
 };
@@ -2878,7 +2878,7 @@ struct jsonObject PFDEBUG_ReplySchema_anyOf_0 = {PFDEBUG_ReplySchema_anyOf_0_ele
 
 /* PFDEBUG_ReplySchema_anyOf_1 reply schema */
 struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug decode"},
+{JSON_TYPE_STRING,"description",.value.string="pfdebug decode sub command, decoded HLL key with sparse representation"},
 {JSON_TYPE_STRING,"type",.value.string="string"},
 };
 
@@ -2886,36 +2886,38 @@ struct jsonObject PFDEBUG_ReplySchema_anyOf_1 = {PFDEBUG_ReplySchema_anyOf_1_ele
 
 /* PFDEBUG_ReplySchema_anyOf_2 reply schema */
 struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_2_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug encoding, status return?"},
+{JSON_TYPE_STRING,"description",.value.string="pfdebug encoding sub command, HLL key encoding"},
 {JSON_TYPE_STRING,"type",.value.string="string"},
 };
 
 struct jsonObject PFDEBUG_ReplySchema_anyOf_2 = {PFDEBUG_ReplySchema_anyOf_2_elements,.length=2};
 
-/* PFDEBUG_ReplySchema_anyOf_3_anyOf_0 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_anyOf_0_elements[] = {
+/* PFDEBUG_ReplySchema_anyOf_3_oneOf_0 reply schema */
+struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_oneOf_0_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="HLL key was not converted to dense representation"},
 {JSON_TYPE_INTEGER,"const",.value.integer=0},
 };
 
-struct jsonObject PFDEBUG_ReplySchema_anyOf_3_anyOf_0 = {PFDEBUG_ReplySchema_anyOf_3_anyOf_0_elements,.length=1};
+struct jsonObject PFDEBUG_ReplySchema_anyOf_3_oneOf_0 = {PFDEBUG_ReplySchema_anyOf_3_oneOf_0_elements,.length=2};
 
-/* PFDEBUG_ReplySchema_anyOf_3_anyOf_1 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_anyOf_1_elements[] = {
+/* PFDEBUG_ReplySchema_anyOf_3_oneOf_1 reply schema */
+struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_oneOf_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="HLL key was converted to dense representation successfully"},
 {JSON_TYPE_INTEGER,"const",.value.integer=1},
 };
 
-struct jsonObject PFDEBUG_ReplySchema_anyOf_3_anyOf_1 = {PFDEBUG_ReplySchema_anyOf_3_anyOf_1_elements,.length=1};
+struct jsonObject PFDEBUG_ReplySchema_anyOf_3_oneOf_1 = {PFDEBUG_ReplySchema_anyOf_3_oneOf_1_elements,.length=2};
 
-/* PFDEBUG_ReplySchema_anyOf_3_anyOf array reply schema */
-struct jsonObject *PFDEBUG_ReplySchema_anyOf_3_anyOf[] = {
-&PFDEBUG_ReplySchema_anyOf_3_anyOf_0,
-&PFDEBUG_ReplySchema_anyOf_3_anyOf_1,
+/* PFDEBUG_ReplySchema_anyOf_3_oneOf array reply schema */
+struct jsonObject *PFDEBUG_ReplySchema_anyOf_3_oneOf[] = {
+&PFDEBUG_ReplySchema_anyOf_3_oneOf_0,
+&PFDEBUG_ReplySchema_anyOf_3_oneOf_1,
 };
 
 /* PFDEBUG_ReplySchema_anyOf_3 reply schema */
 struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug todense"},
-{JSON_TYPE_ARRAY,"anyOf",.value.array={.objects=PFDEBUG_ReplySchema_anyOf_3_anyOf,.length=2}},
+{JSON_TYPE_STRING,"description",.value.string="pfdebug todense sub command"},
+{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=PFDEBUG_ReplySchema_anyOf_3_oneOf,.length=2}},
 };
 
 struct jsonObject PFDEBUG_ReplySchema_anyOf_3 = {PFDEBUG_ReplySchema_anyOf_3_elements,.length=2};
