@@ -65,7 +65,7 @@
                     "type": "string"
                 },
                 {
-                    "description": "when count is given",
+                    "description": "In case `count` is given, an array of elements",
                     "type": "array",
                     "items": {
                         "type": "string"
