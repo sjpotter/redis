@@ -54,9 +54,9 @@
             }
         ],
         "reply_schema": {
-            "anyof": [
+            "oneOf": [
                 {
-                    "description": "timeout expired",
+                    "description": "No element could be popped and the timeout expired.",
                     "type": "null"
                 },
                 {

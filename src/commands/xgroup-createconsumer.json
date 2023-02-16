@@ -50,7 +50,8 @@
             }
         ],
         "reply_schema": {
-            "anyOf": [
+            "description": "The number of created consumers (0 or 1)",
+            "oneOf": [
                 {
                     "const": 1
                 },

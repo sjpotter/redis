@@ -23,7 +23,9 @@
             }
         ],
         "reply_schema": {
-            "type": "string"
+            "description": "replicaOf status",
+            "type": "string",
+            "pattern": "OK*"
         }
     }
 }

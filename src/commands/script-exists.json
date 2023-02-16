@@ -25,6 +25,7 @@
             }
         ],
         "reply_schema": {
+            "description": "An array of integers that correspond to the specified SHA1 digest arguments.",
             "type": "array",
             "items": {
                 "anyOf": [

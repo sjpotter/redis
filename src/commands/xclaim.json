@@ -98,9 +98,9 @@
         ],
         "reply_schema": {
             "description": "Stream entries with IDs matching the specified range.",
-            "anyof": [
+            "anyOf": [
                 {
-                    "description": "array of just IDs when JUSTID is passed",
+                    "description": "If JUSTID option is specified, return just an array of IDs of messages successfully claimed",
                     "type": "array",
                     "items": {
                         "description": "Entry ID",
@@ -131,7 +131,6 @@
                             }
                         ]
                     }
-
                 }
             ]
         }

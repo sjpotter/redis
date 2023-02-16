@@ -50,7 +50,8 @@
         ],
         "reply_schema": {
             "description": "The number of pending messages that were yet associated with such a consumer",
-            "type": "integer"
+            "type": "integer",
+            "minimum": "0"
         }
     }
 }

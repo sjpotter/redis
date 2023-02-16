@@ -64,7 +64,7 @@
                         "type": "integer"
                     },
                     "inactive": {
-                        "Type": "integer"
+                        "type": "integer"
                     }
                 }
             }
