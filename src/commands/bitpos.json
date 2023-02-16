@@ -90,8 +90,17 @@
             }
         ],
         "reply_schema": {
-            "description": "the command returns the position of the first bit set to 1 or 0 according to the request",
-            "type": "integer"
+            "oneOf": [
+                {
+                    "description": "the position of the first bit set to 1 or 0 according to the request",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                {
+                    "description": "In case the `bit` argument is 1 and the string is empty or composed of just zero bytest",
+                    "const": -1
+                }
+            ]
         }
     }
 }

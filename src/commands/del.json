@@ -38,7 +38,8 @@
         ],
         "reply_schema": {
             "description": "the number of keys that were removed",
-            "type": "integer"
+            "type": "integer",
+            "minumum": 0
         },
         "arguments": [
             {

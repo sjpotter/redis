@@ -31,8 +31,9 @@
             }
         ],
         "reply_schema": {
-            "anyOf": [
+            "oneOf": [
                 {
+                    "description": "a set of ACL rule definitions for the user",
                     "type": "object",
                     "properties": {
                         "flags": {
@@ -48,12 +49,15 @@
                             }
                         },
                         "commands": {
+                            "description": "root selector's commands",
                             "type": "string"
                         },
                         "keys": {
+                            "description": "root selector's keys",
                             "type": "string"
                         },
                         "channels": {
+                            "description": "root selector's channels",
                             "type": "string"
                         },
                         "selectors": {
@@ -76,6 +80,7 @@
                     }
                 },
                 {
+                    "description": "If user does not exist",
                     "type": "null"
                 }
             ]

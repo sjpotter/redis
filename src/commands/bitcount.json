@@ -79,7 +79,9 @@
             }
         ],
         "reply_schema": {
-            "type": "integer"
+            "description": "The number of bits set to 1.",
+            "type": "integer",
+            "minimum": 0
         }
     }
 }
