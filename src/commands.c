@@ -6741,10 +6741,12 @@ struct redisCommandArg SLAVEOF_Args[] = {
 
 /* SLAVEOF_ReplySchema reply schema */
 struct jsonObjectElement SLAVEOF_ReplySchema_elements[] = {
-{JSON_TYPE_STRING,"const",.value.string="OK"},
+{JSON_TYPE_STRING,"description",.value.string="slaveOf status"},
+{JSON_TYPE_STRING,"type",.value.string="string"},
+{JSON_TYPE_STRING,"pattern",.value.string="OK*"},
 };
 
-struct jsonObject SLAVEOF_ReplySchema = {SLAVEOF_ReplySchema_elements,.length=1};
+struct jsonObject SLAVEOF_ReplySchema = {SLAVEOF_ReplySchema_elements,.length=3};
 
 /********** SLOWLOG GET ********************/
 

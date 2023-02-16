@@ -28,7 +28,9 @@
             }
         ],
         "reply_schema": {
-            "const": "OK"
+            "description": "slaveOf status",
+            "type": "string",
+            "pattern": "OK*"
         }
     }
 }
