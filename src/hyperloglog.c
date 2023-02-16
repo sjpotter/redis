@@ -1515,7 +1515,7 @@ cleanup:
  */
 void pfdebugCommand(client *c) {
     char *cmd = c->argv[1]->ptr;
-    struct hllhdr *hdr;
+        struct hllhdr *hdr;
     robj *o;
     int j;
 

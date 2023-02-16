@@ -47,6 +47,36 @@
                 "type": "key",
                 "key_spec_index": 0
             }
-        ]
+        ],
+        "reply_schema": {
+            "anyOf": [
+                {
+                    "description": "pfdebug getreg",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "description": "pfdebug decode",
+                    "type": "string"
+                },
+                {
+                    "description": "pfdebug encoding, status return?",
+                    "type": "string"
+                },
+                {
+                    "description": "pfdebug todense",
+                    "anyOf": [
+                        {
+                            "const": 0
+                        },
+                        {
+                            "const": 1
+                        }
+                    ]
+                }
+            ]
+        }
     }
 }
