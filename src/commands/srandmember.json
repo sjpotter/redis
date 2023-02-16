@@ -70,7 +70,8 @@
                     "uniqueItems": true,
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "minItems": 1
                 },
                 {
                     "description": "In case `count` is given and key doesn't exist",
