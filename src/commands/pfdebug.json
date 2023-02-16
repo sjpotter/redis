@@ -47,38 +47,6 @@
                 "type": "key",
                 "key_spec_index": 0
             }
-        ],
-        "reply_schema": {
-            "anyOf": [
-                {
-                    "description": "pfdebug getreg sub command, HLL registers value",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                {
-                    "description": "pfdebug decode sub command, decoded HLL key with sparse representation",
-                    "type": "string"
-                },
-                {
-                    "description": "pfdebug encoding sub command, HLL key encoding",
-                    "type": "string"
-                },
-                {
-                    "description": "pfdebug todense sub command",
-                    "oneOf": [
-                        {
-                            "description": "HLL key was not converted to dense representation",
-                            "const": 0
-                        },
-                        {
-                            "description": "HLL key was converted to dense representation successfully",
-                            "const": 1
-                        }
-                    ]
-                }
-            ]
-        }
+        ]
     }
 }

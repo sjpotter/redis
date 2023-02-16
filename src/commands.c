@@ -2860,83 +2860,6 @@ struct redisCommandArg PFDEBUG_Args[] = {
 {0}
 };
 
-/* PFDEBUG_ReplySchema_anyOf_0_items reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_0_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="integer"},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_0_items = {PFDEBUG_ReplySchema_anyOf_0_items_elements,.length=1};
-
-/* PFDEBUG_ReplySchema_anyOf_0 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug getreg sub command, HLL registers value"},
-{JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_OBJECT,"items",.value.object=&PFDEBUG_ReplySchema_anyOf_0_items},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_0 = {PFDEBUG_ReplySchema_anyOf_0_elements,.length=3};
-
-/* PFDEBUG_ReplySchema_anyOf_1 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug decode sub command, decoded HLL key with sparse representation"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_1 = {PFDEBUG_ReplySchema_anyOf_1_elements,.length=2};
-
-/* PFDEBUG_ReplySchema_anyOf_2 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_2_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug encoding sub command, HLL key encoding"},
-{JSON_TYPE_STRING,"type",.value.string="string"},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_2 = {PFDEBUG_ReplySchema_anyOf_2_elements,.length=2};
-
-/* PFDEBUG_ReplySchema_anyOf_3_oneOf_0 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_oneOf_0_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="HLL key was not converted to dense representation"},
-{JSON_TYPE_INTEGER,"const",.value.integer=0},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_3_oneOf_0 = {PFDEBUG_ReplySchema_anyOf_3_oneOf_0_elements,.length=2};
-
-/* PFDEBUG_ReplySchema_anyOf_3_oneOf_1 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_oneOf_1_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="HLL key was converted to dense representation successfully"},
-{JSON_TYPE_INTEGER,"const",.value.integer=1},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_3_oneOf_1 = {PFDEBUG_ReplySchema_anyOf_3_oneOf_1_elements,.length=2};
-
-/* PFDEBUG_ReplySchema_anyOf_3_oneOf array reply schema */
-struct jsonObject *PFDEBUG_ReplySchema_anyOf_3_oneOf[] = {
-&PFDEBUG_ReplySchema_anyOf_3_oneOf_0,
-&PFDEBUG_ReplySchema_anyOf_3_oneOf_1,
-};
-
-/* PFDEBUG_ReplySchema_anyOf_3 reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_anyOf_3_elements[] = {
-{JSON_TYPE_STRING,"description",.value.string="pfdebug todense sub command"},
-{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=PFDEBUG_ReplySchema_anyOf_3_oneOf,.length=2}},
-};
-
-struct jsonObject PFDEBUG_ReplySchema_anyOf_3 = {PFDEBUG_ReplySchema_anyOf_3_elements,.length=2};
-
-/* PFDEBUG_ReplySchema_anyOf array reply schema */
-struct jsonObject *PFDEBUG_ReplySchema_anyOf[] = {
-&PFDEBUG_ReplySchema_anyOf_0,
-&PFDEBUG_ReplySchema_anyOf_1,
-&PFDEBUG_ReplySchema_anyOf_2,
-&PFDEBUG_ReplySchema_anyOf_3,
-};
-
-/* PFDEBUG_ReplySchema reply schema */
-struct jsonObjectElement PFDEBUG_ReplySchema_elements[] = {
-{JSON_TYPE_ARRAY,"anyOf",.value.array={.objects=PFDEBUG_ReplySchema_anyOf,.length=4}},
-};
-
-struct jsonObject PFDEBUG_ReplySchema = {PFDEBUG_ReplySchema_elements,.length=1};
-
 /********** PFMERGE ********************/
 
 /* PFMERGE history */
@@ -9648,7 +9571,7 @@ struct redisCommand redisCommandTable[] = {
 /* hyperloglog */
 {"pfadd","Adds the specified elements to the specified HyperLogLog.","O(1) to add every element.","2.8.9",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFADD_History,PFADD_tips,pfaddCommand,-2,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_HYPERLOGLOG,{{NULL,CMD_KEY_RW|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PFADD_Args,.reply_schema=&PFADD_ReplySchema},
 {"pfcount","Return the approximated cardinality of the set(s) observed by the HyperLogLog at key(s).","O(1) with a very small average constant time when called with a single key. O(N) with N being the number of keys, and much bigger constant times, when called with multiple keys.","2.8.9",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFCOUNT_History,PFCOUNT_tips,pfcountCommand,-2,CMD_READONLY|CMD_MAY_REPLICATE,ACL_CATEGORY_HYPERLOGLOG,{{"RW because it may change the internal representation of the key, and propagate to replicas",CMD_KEY_RW|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={-1,1,0}}},.args=PFCOUNT_Args,.reply_schema=&PFCOUNT_ReplySchema},
-{"pfdebug","Internal commands for debugging HyperLogLog values","N/A","2.8.9",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFDEBUG_History,PFDEBUG_tips,pfdebugCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_ADMIN,ACL_CATEGORY_HYPERLOGLOG,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PFDEBUG_Args,.reply_schema=&PFDEBUG_ReplySchema},
+{"pfdebug","Internal commands for debugging HyperLogLog values","N/A","2.8.9",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFDEBUG_History,PFDEBUG_tips,pfdebugCommand,3,CMD_WRITE|CMD_DENYOOM|CMD_ADMIN,ACL_CATEGORY_HYPERLOGLOG,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={0,1,0}}},.args=PFDEBUG_Args},
 {"pfmerge","Merge N different HyperLogLogs into a single one.","O(N) to merge N HyperLogLogs, but with high constant times.","2.8.9",CMD_DOC_NONE,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFMERGE_History,PFMERGE_tips,pfmergeCommand,-2,CMD_WRITE|CMD_DENYOOM,ACL_CATEGORY_HYPERLOGLOG,{{NULL,CMD_KEY_RW|CMD_KEY_ACCESS|CMD_KEY_INSERT,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}},{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={2},KSPEC_FK_RANGE,.fk.range={-1,1,0}}},.args=PFMERGE_Args,.reply_schema=&PFMERGE_ReplySchema},
 {"pfselftest","An internal command for testing HyperLogLog values","N/A","2.8.9",CMD_DOC_SYSCMD,NULL,NULL,COMMAND_GROUP_HYPERLOGLOG,PFSELFTEST_History,PFSELFTEST_tips,pfselftestCommand,1,CMD_ADMIN,ACL_CATEGORY_HYPERLOGLOG,.reply_schema=&PFSELFTEST_ReplySchema},
 /* list */
