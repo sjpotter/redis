@@ -19,6 +19,13 @@
                 "optional": true,
                 "multiple": true
             }
-        ]
+        ],
+        "reply_schema": {
+            "description": "the number of subscribers per channel",
+            "type": "object",
+            "additionalProperties": {
+                "type": "integer"
+            }
+        }
     }
 }
