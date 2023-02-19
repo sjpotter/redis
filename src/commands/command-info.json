@@ -35,7 +35,7 @@
         "reply_schema": {
             "type": "array",
             "items": {
-                "anyOf": [
+                "oneOf": [
                     {
                         "description": "command does not exist",
                         "type": "null"
