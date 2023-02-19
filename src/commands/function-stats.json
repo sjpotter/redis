@@ -18,58 +18,6 @@
             "NONDETERMINISTIC_OUTPUT",
             "REQUEST_POLICY:ALL_SHARDS",
             "RESPONSE_POLICY:SPECIAL"
-        ],
-        "reply_schema": {
-            "description": "Information about the function that's currently running and information about the available execution engines.",
-            "type": "object",
-            "properties": {
-                "running_script":{
-                    "anyOf": [
-                        {
-                            "description": "script isn't running",
-                            "type": "null"
-                        },
-                        {
-                            "description": "running script info",
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "description": "the name of the function",
-                                    "type": "string"
-                                },
-                                "command": {
-                                    "description": "the command and arguments used for invoking the function",
-                                    "type": "array",
-                                    "minItem": 1,
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                },
-                                "duration_ms": {
-                                    "description": "the function's runtime duration in milliseconds",
-                                    "type": "number",
-                                    "minimum": 0
-                                }
-                            }
-                        }
-                    ]
-                },
-                "engines": {
-                    "description": "A map of maps. Each entry in the map represent a single engine.",
-                    "type": "object",
-                    "properties": {
-                        "type": "object",
-                        "properties": {
-                            "libraries_count": {
-                                "type": "integer"
-                            },
-                            "functions_count": {
-                                "type": "integer"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        ]
     }
 }
