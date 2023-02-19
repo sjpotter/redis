@@ -21,11 +21,8 @@
             }
         ],
         "reply_schema": {
-            "description": "the number of subscribers per channel",
-            "type": "object",
-            "additionalProperties": {
-                "type": "integer"
-            }
+            "description": "the number of subscribers per channel, each even element (including 0th) is channel name, each odd element is the number of subscribers",
+            "type": "array"
         }
     }
 }
