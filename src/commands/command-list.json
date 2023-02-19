@@ -48,7 +48,8 @@
             "items": {
                 "description": "command name",
                 "type": "string"
-            }
+            },
+            "uniqueItems": true
         }
     }
 }
