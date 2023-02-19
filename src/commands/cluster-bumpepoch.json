@@ -19,7 +19,7 @@
             "oneOf": [
                 {
                     "description": "if the epoch was incremented",
-                    "const": "BUMPED"
+                    "pattern": "^BUMPED [0-9]*$"
                 },
                 {
                     "description": "if the node already has the greatest config epoch in the cluster",
