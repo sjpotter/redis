@@ -7,6 +7,12 @@
         "arity": -2,
         "container": "ACL",
         "function": "aclCommand",
+        "history": [
+            [
+                "7.2.0",
+                "Added entry ID, timestamp created, and timestamp last updated."
+            ]
+        ],
         "command_flags": [
             "ADMIN",
             "NOSCRIPT",
@@ -43,6 +49,15 @@
                             },
                             "client-info": {
                                 "type": "string"
+                            },
+                            "entry-id": {
+                                "type": "integer"
+                            },
+                            "timestamp-created": {
+                                "type": "integer"
+                            },
+                            "timestamp-last-updated": {
+                                "type": "integer"
                             }
                         }
                     }

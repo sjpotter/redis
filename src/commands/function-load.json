@@ -32,7 +32,7 @@
             }
         ],
         "reply_schema": {
-            "description": "the library name that was loaded",
+            "description": "The library name that was loaded",
             "type": "string"
         }
     }
