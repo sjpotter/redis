@@ -14,7 +14,8 @@
         ],
         "reply_schema": {
             "description": "the number of patterns all the clients are subscribed to",
-            "type": "integer"
+            "type": "integer",
+            "minumum": 0
         }
     }
 }
