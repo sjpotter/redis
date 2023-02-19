@@ -28,7 +28,7 @@
                         "type": "string"
                     },
                     "create-time": {
-                        "description": "unix tiem creation time of the link. (In the case of a to link, this is the time when the TCP link is created by the local node, not the time when it is actually established.)",
+                        "description": "unix time creation time of the link. (In the case of a _to_ link, this is the time when the TCP link is created by the local node, not the time when it is actually established.)",
                         "type": "integer"
                     },
                     "events": {
