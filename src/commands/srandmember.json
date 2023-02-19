@@ -67,7 +67,6 @@
                 {
                     "description": "In case `count` is given, an array of elements",
                     "type": "array",
-                    "uniqueItems": true,
                     "items": {
                         "type": "string"
                     },

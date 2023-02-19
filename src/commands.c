@@ -5997,12 +5997,11 @@ struct jsonObject SRANDMEMBER_ReplySchema_oneOf_2_items = {SRANDMEMBER_ReplySche
 struct jsonObjectElement SRANDMEMBER_ReplySchema_oneOf_2_elements[] = {
 {JSON_TYPE_STRING,"description",.value.string="In case `count` is given, an array of elements"},
 {JSON_TYPE_STRING,"type",.value.string="array"},
-{JSON_TYPE_BOOLEAN,"uniqueItems",.value.boolean=1},
 {JSON_TYPE_OBJECT,"items",.value.object=&SRANDMEMBER_ReplySchema_oneOf_2_items},
 {JSON_TYPE_INTEGER,"minItems",.value.integer=1},
 };
 
-struct jsonObject SRANDMEMBER_ReplySchema_oneOf_2 = {SRANDMEMBER_ReplySchema_oneOf_2_elements,.length=5};
+struct jsonObject SRANDMEMBER_ReplySchema_oneOf_2 = {SRANDMEMBER_ReplySchema_oneOf_2_elements,.length=4};
 
 /* SRANDMEMBER_ReplySchema_oneOf_3 reply schema */
 struct jsonObjectElement SRANDMEMBER_ReplySchema_oneOf_3_elements[] = {
