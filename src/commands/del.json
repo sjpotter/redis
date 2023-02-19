@@ -39,7 +39,7 @@
         "reply_schema": {
             "description": "the number of keys that were removed",
             "type": "integer",
-            "minumum": 0
+            "minimum": 0
         },
         "arguments": [
             {
