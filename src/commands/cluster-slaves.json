@@ -24,6 +24,9 @@
                 "name": "node-id",
                 "type": "string"
             }
-        ]
+        ],
+        "reply_schema": {
+            "description": "a list of replica nodes replicating from the specified master node provided in the same format used by CLUSTER NODES, as json doesn't support newlines, can't capture it correctly"
+        }
     }
 }

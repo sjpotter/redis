@@ -12,6 +12,9 @@
         ],
         "command_tips": [
             "NONDETERMINISTIC_OUTPUT"
-        ]
+        ],
+        "reply_schema": {
+            "description": "the serialized cluster configuration, as json doesn't support new lines, can't capture it correctly"
+        }
     }
 }
