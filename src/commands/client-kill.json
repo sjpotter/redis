@@ -150,7 +150,8 @@
                 },
                 {
                     "description": "when called in filter/value format, the number of clients killed",
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 }
             ]
         }
