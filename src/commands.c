@@ -2072,9 +2072,30 @@ struct jsonObjectElement SORT_ReplySchema_oneOf_0_elements[] = {
 
 struct jsonObject SORT_ReplySchema_oneOf_0 = {SORT_ReplySchema_oneOf_0_elements,.length=3};
 
+/* SORT_ReplySchema_oneOf_1_items_oneOf_0 reply schema */
+struct jsonObjectElement SORT_ReplySchema_oneOf_1_items_oneOf_0_elements[] = {
+{JSON_TYPE_STRING,"type",.value.string="string"},
+};
+
+struct jsonObject SORT_ReplySchema_oneOf_1_items_oneOf_0 = {SORT_ReplySchema_oneOf_1_items_oneOf_0_elements,.length=1};
+
+/* SORT_ReplySchema_oneOf_1_items_oneOf_1 reply schema */
+struct jsonObjectElement SORT_ReplySchema_oneOf_1_items_oneOf_1_elements[] = {
+{JSON_TYPE_STRING,"description",.value.string="GET option is specified, but no object was found "},
+{JSON_TYPE_STRING,"type",.value.string="null"},
+};
+
+struct jsonObject SORT_ReplySchema_oneOf_1_items_oneOf_1 = {SORT_ReplySchema_oneOf_1_items_oneOf_1_elements,.length=2};
+
+/* SORT_ReplySchema_oneOf_1_items_oneOf array reply schema */
+struct jsonObject *SORT_ReplySchema_oneOf_1_items_oneOf[] = {
+&SORT_ReplySchema_oneOf_1_items_oneOf_0,
+&SORT_ReplySchema_oneOf_1_items_oneOf_1,
+};
+
 /* SORT_ReplySchema_oneOf_1_items reply schema */
 struct jsonObjectElement SORT_ReplySchema_oneOf_1_items_elements[] = {
-{JSON_TYPE_STRING,"type",.value.string="string"},
+{JSON_TYPE_ARRAY,"oneOf",.value.array={.objects=SORT_ReplySchema_oneOf_1_items_oneOf,.length=2}},
 };
 
 struct jsonObject SORT_ReplySchema_oneOf_1_items = {SORT_ReplySchema_oneOf_1_items_elements,.length=1};
