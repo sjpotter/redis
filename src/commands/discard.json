@@ -16,7 +16,7 @@
         "acl_categories": [
             "TRANSACTION"
         ],
-        "reply_schema":  {
+        "reply_schema": {
             "const": "OK"
         }
     }
