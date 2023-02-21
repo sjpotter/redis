@@ -24,14 +24,60 @@
                         "description": "an even number element array specifying the start and end slot numbers for slot ranges owned by this shard",
                         "type": "array",
                         "items": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     "nodes": {
-                        "description": "a set of key/value pairs (even/odd indexes) that describe the nodes details",
+                        "description": "nodes that handle these slot ranges",
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "port": {
+                                    "type": "integer"
+                                },
+                                "tls-port": {
+                                    "type": "integer"
+                                },
+                                "ip": {
+                                    "type": "string"
+                                },
+                                "endpoint": {
+                                    "type": "string"
+                                },
+                                "hostname": {
+                                    "type": "string"
+                                },
+                                "role": {
+                                    "oneOf": [
+                                        {
+                                            "const": "master"
+                                        },
+                                        {
+                                            "const": "replica"
+                                        }
+                                    ]
+                                },
+                                "replication-offset": {
+                                    "type": "integer"
+                                },
+                                "health": {
+                                    "oneOf": [
+                                        {
+                                            "const": "fail"
+                                        },
+                                        {
+                                            "const": "loading"
+                                        },
+                                        {
+                                            "const": "online"
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     }
                 },
