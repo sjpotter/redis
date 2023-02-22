@@ -67,7 +67,7 @@
                     "type": "string"
                 },
                 {
-                    "description": "list of key/value pairs from the has where each even element is the key, and each odd value is value",
+                    "description": "list of key/value pairs from the hash where each even element is the key, and each odd element is the value",
                     "type": "array",
                     "items": {
                         "type": "string"

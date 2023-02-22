@@ -67,7 +67,7 @@
                     "type": "string"
                 },
                 {
-                    "description": "list of keys",
+                    "description": "list of set members",
                     "type": "array",
                     "items": {
                         "type": "string"
