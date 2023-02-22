@@ -100,6 +100,9 @@
             },
             "additionalProperties": {
                 "type": "object",
+                "propertyNames": {
+                    "pattern": "^db.[0-9]+"
+                },
                 "properties": {
                     "overhead.hashtable.main": { "type": "integer" },
                     "overhead.hashtable.expires": { "type": "integer" },
