@@ -70,6 +70,14 @@
                             "description": "state of the replication from the point of view of the master",
                             "oneOf": [
                                 {
+                                    "description": "the instance is in handshake with its master",
+                                    "const": "handshake"
+                                },
+                                {
+                                    "description": "the instance in not active",
+                                    "const": "none"
+                                },
+                                {
                                     "description": "the instance needs to connect to its master",
                                     "const": "connect"
                                 },
@@ -84,6 +92,10 @@
                                 {
                                     "description": "the replica is online",
                                     "const": "connected"
+                                },
+                                {
+                                    "description": "instance state is unknown",
+                                    "const": "unknown"
                                 }
                             ]
                         },
