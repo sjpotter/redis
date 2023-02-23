@@ -98,17 +98,22 @@
                     "type": "integer"
                 }
             },
-            "additionalProperties": {
-                "type": "object",
-                "propertyNames": {
-                    "pattern": "^db.[0-9]+"
-                },
-                "properties": {
-                    "overhead.hashtable.main": { "type": "integer" },
-                    "overhead.hashtable.expires": { "type": "integer" },
-                    "overhead.hashtable.slot-to-keys": { "type": "integer" }
-                },
-                "additionalProperties": false
+            "patternProperties": {
+                "^db.": {
+                    "type": "object",
+                    "properties": {
+                        "overhead.hashtable.main": {
+                            "type": "integer"
+                        },
+                        "overhead.hashtable.expires": {
+                            "type": "integer"
+                        },
+                        "overhead.hashtable.slot-to-keys": {
+                            "type": "integer"
+                        }
+                    },
+                    "additionalProperties": false
+                }
             }
         }
     }
