@@ -18,7 +18,8 @@
         ],
         "reply_schema": {
             "description": "The number of keys in the specified hash slot",
-            "type": "integer"
+            "type": "integer",
+            "minimum": 0
         }
     }
 }

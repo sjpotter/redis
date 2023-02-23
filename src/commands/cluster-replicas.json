@@ -21,7 +21,12 @@
             }
         ],
         "reply_schema": {
-            "description": "a list of replica nodes replicating from the specified master node provided in the same format used by CLUSTER NODES, as json doesn't support newlines, can't capture it correctly"
+            "description": "a list of replica nodes replicating from the specified master node provided in the same format used by CLUSTER NODES",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "the serialized cluster configuration"
+            }
         }
     }
 }
