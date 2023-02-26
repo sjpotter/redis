@@ -385,7 +385,9 @@ void blockForKeys(client *c, int btype, robj **keys, int numkeys, mstime_t timeo
         }
     }
     c->bstate.unblock_on_nokey = unblock_on_nokey;
-    c->flags |= CLIENT_PENDING_COMMAND;
+    if (btype != BLOCKED_MODULE) {
+        c->flags |= CLIENT_PENDING_COMMAND;
+    }
     blockClient(c,btype);
 }
 
@@ -630,8 +632,6 @@ static void moduleUnblockClientOnKey(client *c, robj *key) {
 
     if (moduleTryServeClientBlockedOnKey(c, key)) {
         updateStatsOnUnblock(c, 0, elapsedUs(replyTimer), server.stat_total_error_replies != prev_error_replies);
-        if (c->flags & CLIENT_PENDING_COMMAND)
-            c->flags &= ~CLIENT_PENDING_COMMAND;
         moduleUnblockClient(c);
     }
     /* We need to call afterCommand even if the client was not unblocked
