@@ -195,53 +195,89 @@
         ],
         "reply_schema": {
             "description": "Array of matched members information",
-            "anyOf": [
+            "oneOf": [
                 {
-                    "description": "If no WITH option is specified, array of matched members names",
+                    "description": "no matches",
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 0
+                },
+                {
+                    "description": "If no WITH option is specified, just an array of matched members names",
                     "type": "array",
                     "items": {
                         "description": "name",
                         "type": "string"
-                    }
+                    },
+                    "minItems": 1
                 },
                 {
                     "type": "array",
                     "items": {
-                        "type" : "array",
-                        "prefixItems": {
-                            "description": "name",
-                            "type": "string"
-                        },
-                        "items": {
-                            "anyOf": [
-                                {
-                                    "description": "If WITHDIST option is specified, the distance from the center as a floating point number, in the same unit specified in the radius",
-                                    "type": "number"
-                                },
-                                {
-                                    "description": "If WITHHASH option is specified, the geohash integer",
-                                    "type": "string"
-                                },
-                                {
-                                    "description": "If WITHCOORD option is specified, the coordinates as a two items x,y array (longitude,latitude)",
-                                    "type": "array",
-                                    "items": [
-                                        {
-                                            "description": "latitude (x)",
-                                            "type": "number"
-                                        },
-                                        {
-                                            "description": "longitude (y)",
-                                            "type": "number"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
+                        "description": "If WITHDIST option is specified, an array of name and distance tuples from the center as a floating point number, in the same unit specified in the radius",
+                        "type": "array",
+                        "items": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "distance",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "minItems": 1
                 },
                 {
-                    "description": "number of items stored in key",
+                    "description": "If WITHHASH option is specified, an array of name and geohash tuples",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "description": "geohash",
+                                "type": "integer"
+                            }
+                        ]
+                    },
+                    "minItems": 1
+                },
+                {
+                    "description": "If WITHCOORD option is specified, an array of name, coordinate tuple, where coordinates ai a two items x,y array (longitude,latitude)",
+                    "type": "array",
+                    "items": {
+                        "type" : "array",
+                        "items": [
+                            {
+                                "description": "name",
+                                "type": "string"
+                            },
+                            {
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "description": "latitude (x)",
+                                        "type": "number"
+                                    },
+                                    {
+                                        "description": "longitude (y)",
+                                        "type": "number"
+                                    }
+                                ],
+                                "minItems": 2,
+                                "maxItems": 2
+                            }
+                        ]
+                    },
+                    "minItems": 1
+                },
+                {
+                    "description": "number of items stored in key if a write operation",
                     "type": "integer"
                 }
             ]
