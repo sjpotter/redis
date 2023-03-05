@@ -236,8 +236,7 @@
                         ],
                         "minItems": 2,
                         "maxItems": 2
-                    },
-                    "minItems": 1
+                    }
                 },
                 {
                     "description": "If WITHHASH option is specified, an array of name and geohash tuples",
@@ -256,8 +255,7 @@
                         ],
                         "minItems": 2,
                         "maxItems": 2
-                    },
-                    "minItems": 1
+                    }
                 },
                 {
                     "description": "If WITHCOORD option is specified, an array of name, coordinate tuple, where coordinates ai a two items x,y array (longitude,latitude)",
@@ -287,8 +285,7 @@
                         ],
                         "minItems": 2,
                         "maxItems": 2
-                    },
-                    "minItems": 1
+                    }
                 }
             ]
         }
