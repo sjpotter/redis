@@ -140,8 +140,7 @@
                     "items": {
                         "description": "name",
                         "type": "string"
-                    },
-                    "minItems": 1
+                    }
                 },
                 {
                     "type": "array",

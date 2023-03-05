@@ -202,8 +202,7 @@
                     "items": {
                         "description": "name",
                         "type": "string"
-                    },
-                    "minItems": 1
+                    }
                 },
                 {
                     "type": "array",
@@ -260,11 +259,11 @@
                                 "items": [
                                     {
                                         "description": "latitude (x)",
-                                        "type": "string"
+                                        "type": "number"
                                     },
                                     {
                                         "description": "longitude (y)",
-                                        "type": "string"
+                                        "type": "number"
                                     }
                                 ],
                                 "minItems": 2,

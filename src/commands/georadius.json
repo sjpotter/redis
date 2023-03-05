@@ -247,7 +247,9 @@
                                 "description": "geohash",
                                 "type": "integer"
                             }
-                        ]
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "minItems": 1
                 },
@@ -266,17 +268,19 @@
                                 "items": [
                                     {
                                         "description": "latitude (x)",
-                                        "type": "string"
+                                        "type": "number"
                                     },
                                     {
                                         "description": "longitude (y)",
-                                        "type": "string"
+                                        "type": "number"
                                     }
                                 ],
                                 "minItems": 2,
                                 "maxItems": 2
                             }
-                        ]
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "minItems": 1
                 },
