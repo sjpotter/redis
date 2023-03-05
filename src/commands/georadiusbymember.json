@@ -195,15 +195,9 @@
         ],
         "reply_schema": {
             "description": "Array of matched members information",
-            "oneOf": [
+            "anyOf": [
                 {
-                    "description": "no matches",
-                    "type": "array",
-                    "minItems": 0,
-                    "maxItems": 0
-                },
-                {
-                    "description": "If no WITH option is specified, just an array of matched members names",
+                    "description": "If no WITH option is specified, an array of matched members names",
                     "type": "array",
                     "items": {
                         "description": "name",
@@ -225,7 +219,9 @@
                                 "description": "distance",
                                 "type": "string"
                             }
-                        ]
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "minItems": 1
                 },
@@ -243,7 +239,9 @@
                                 "description": "geohash",
                                 "type": "integer"
                             }
-                        ]
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "minItems": 1
                 },
@@ -262,17 +260,19 @@
                                 "items": [
                                     {
                                         "description": "latitude (x)",
-                                        "type": "number"
+                                        "type": "string"
                                     },
                                     {
                                         "description": "longitude (y)",
-                                        "type": "number"
+                                        "type": "string"
                                     }
                                 ],
                                 "minItems": 2,
                                 "maxItems": 2
                             }
-                        ]
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "minItems": 1
                 },
