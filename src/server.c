@@ -3824,6 +3824,20 @@ uint64_t getCommandFlags(client *c) {
     return cmd_flags;
 }
 
+int isMultiQueuedCommand(client *c) {
+    if (c->cmd->proc == execCommand ||
+        c->cmd->proc == discardCommand ||
+        c->cmd->proc == multiCommand ||
+        c->cmd->proc == watchCommand ||
+        c->cmd->proc == quitCommand ||
+        c->cmd->proc == resetCommand)
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
 /* If this function gets called we already read a whole
  * command, arguments are in the client argv/argc fields.
  * processCommand() execute the command or prepare the
@@ -4154,14 +4168,7 @@ int processCommand(client *c) {
     }
 
     /* Exec the command */
-    if (c->flags & CLIENT_MULTI &&
-        c->cmd->proc != execCommand &&
-        c->cmd->proc != discardCommand &&
-        c->cmd->proc != multiCommand &&
-        c->cmd->proc != watchCommand &&
-        c->cmd->proc != quitCommand &&
-        c->cmd->proc != resetCommand)
-    {
+    if (c->flags & CLIENT_MULTI && isMultiQueuedCommand(c)) {
         queueMultiCommand(c, cmd_flags);
         addReply(c,shared.queued);
     } else {
